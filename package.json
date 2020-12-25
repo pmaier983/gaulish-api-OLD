@@ -2,9 +2,10 @@
   "name": "gaulish-api",
   "version": "1.0.0",
   "description": "An API for gaulish.io",
-  "main": "index.js",
+  "main": "./index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "dotenv -- cross-var npx postgraphile -c 'postgres://%RDS_USER%:%RDS_PASSWORD%@%RDS_HOST%/%RDS_DATABASE%?sslca=config/amazon-rds-ca-cert.pem' --watch --enhance-graphiql --dynamic-json",
+    "lint": "eslint . --fix"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,18 @@
   "bugs": {
     "url": "https://github.com/pmaier983/gaulish-api/issues"
   },
-  "homepage": "https://github.com/pmaier983/gaulish-api#readme"
+  "homepage": "https://github.com/pmaier983/gaulish-api#readme",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.11.0",
+    "@typescript-eslint/parser": "^4.11.0",
+    "cross-var": "^1.1.0",
+    "dotenv-cli": "^4.0.0",
+    "eslint": "^7.16.0",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-plugin-prettier": "^3.3.0",
+    "husky": "^4.3.6",
+    "lint-staged": "^10.5.3",
+    "prettier": "^2.2.1",
+    "typescript": "^4.1.3"
+  }
 }
