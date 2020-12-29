@@ -10,7 +10,7 @@
     "start": "dotenv -- node ./dist/server.js",
     "dev": "dotenv -- tsnd --files --respawn src/server.ts",
     "build:doc": "docker build --build-arg %NODE_ENV% -t gaulish-api .",
-    "dev:doc": "docker run --rm --name gaulish-api -p 3000:3000 -v $INIT_CWD:/usr/src gaulish-api",
+    "dev:doc": "docker run --rm --name gaulish-api -p 3001:3001 -v $INIT_CWD:/usr/src gaulish-api",
     "lint": "eslint . --fix"
   },
   "dependencies": {
