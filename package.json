@@ -2,19 +2,15 @@
   "name": "gaulish-api",
   "version": "1.0.0",
   "description": "An API for gaulish.io",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/pmaier983/gaulish-api.git"
-  },
   "author": "Phillip Maier",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/pmaier983/gaulish-api/issues"
-  },
-  "homepage": "https://github.com/pmaier983/gaulish-api#readme",
-  "main": "./src/app.ts",
+  "main": "./src/server.ts",
   "scripts": {
-    "start": "cross-env CURRENT_ENV=development tsnd --files -r dotenv/config --respawn src/server.ts",
+    "build": "tsc",
+    "start": "dotenv -- node ./dist/server.js",
+    "dev": "dotenv -- tsnd --files --respawn src/server.ts",
+    "build:doc": "docker build --build-arg %NODE_ENV% -t gaulish-api .",
+    "dev:doc": "docker run --rm --name gaulish-api -p 3000:3000 -v $INIT_CWD:/usr/src gaulish-api",
     "lint": "eslint . --fix"
   },
   "dependencies": {

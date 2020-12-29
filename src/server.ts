@@ -3,7 +3,13 @@ import postgraphile from "postgraphile";
 
 const app = express();
 
-const { RDS_USER, RDS_PASSWORD, RDS_HOST, RDS_DATABASE, PORT } = process.env;
+const {
+  RDS_USER,
+  RDS_PASSWORD,
+  RDS_HOST,
+  RDS_DATABASE,
+  GRAPHQL_PORT,
+} = process.env;
 
 app.use(
   postgraphile(
@@ -17,6 +23,6 @@ app.use(
   )
 );
 
-app.listen(PORT, () =>
-  console.log(`Server running at http://localhost:${PORT}/graphiql`)
+app.listen(GRAPHQL_PORT, () =>
+  console.log(`Server running at http://localhost:${GRAPHQL_PORT}/graphiql`)
 );
