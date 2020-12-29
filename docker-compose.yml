@@ -1,0 +1,10 @@
+services:
+  api:
+    build:
+      # tell docker to look at the current folder for the dockerfile/image
+      context: .
+      # use the `base` multi-stage... stage
+      target: base
+    command: npm run dev  
+    ports:
+      - 3001:3001

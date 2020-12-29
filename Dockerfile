@@ -1,16 +1,20 @@
-FROM node:alpine
+FROM node:alpine AS base
 
 # Select the work directory 
 WORKDIR /usr/src 
 
 # Build node_modules in as low a layer as possible (to avoid slow build times)
-COPY package-lock.json ./
+COPY package*.json ./
 RUN npm i
 
-# copy the app & scripts over 
-COPY .env package.json ./
-COPY src ./
+# copy config for the app over
+COPY .env tsconfig.json ./
 
-EXPOSE 3001
+# copy the actual app over to the src file
+COPY src ./src/
 
-CMD npm run dev
+# if in a production environment (not using docker-compose)
+FROM base AS build
+
+# build the app and 
+CMD ls && npm run build && npm run start
