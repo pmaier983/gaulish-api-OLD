@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-const OFF = 0;
-const WARN = 1;
-const ERROR = 2;
+const OFF = 0
+const WARN = 1
+const ERROR = 2
 /* eslint-enable @typescript-eslint/no-unused-vars */
 
 module.exports = {
@@ -43,4 +43,4 @@ module.exports = {
     "import/prefer-default-export": OFF,
     "space-infix-ops": OFF,
   },
-};
+}

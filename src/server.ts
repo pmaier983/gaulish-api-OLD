@@ -1,7 +1,7 @@
-import express from "express";
-import postgraphile from "postgraphile";
+import express from "express"
+import postgraphile from "postgraphile"
 
-const app = express();
+const app = express()
 
 const {
   RDS_USER,
@@ -9,21 +9,21 @@ const {
   RDS_HOST,
   RDS_DATABASE,
   GRAPHQL_PORT,
-} = process.env;
+} = process.env
 
-// TODO: change this in production
 app.use(
   postgraphile(
     `postgres://${RDS_USER}:${RDS_PASSWORD}@${RDS_HOST}/${RDS_DATABASE}`,
     "public",
+    // TODO: change this in production
     {
       watchPg: true,
       graphiql: true,
       enhanceGraphiql: true,
     }
   )
-);
+)
 
 app.listen(GRAPHQL_PORT, () =>
   console.log(`Server running at http://localhost:${GRAPHQL_PORT}/graphiql`)
-);
+)
