@@ -1,7 +1,10 @@
 FROM node:alpine AS base
 
+# get the DOCKER_WORKDIR from above (cli or docker-compose)
+ARG DOCKER_WORKDIR
+
 # Select the work directory 
-WORKDIR /usr/src 
+WORKDIR $DOCKER_WORKDIR
 
 # Build node_modules in as low a layer as possible (to avoid slow build times)
 COPY package*.json ./

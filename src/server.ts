@@ -11,6 +11,7 @@ const {
   GRAPHQL_PORT,
 } = process.env;
 
+// TODO: change this in production
 app.use(
   postgraphile(
     `postgres://${RDS_USER}:${RDS_PASSWORD}@${RDS_HOST}/${RDS_DATABASE}`,

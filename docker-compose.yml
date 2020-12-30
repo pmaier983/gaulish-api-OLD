@@ -5,6 +5,17 @@ services:
       context: .
       # use the `base` multi-stage... stage
       target: base
-    command: npm run dev  
+      # Pass DOCKER_WORKDIR to dockerfile
+      args:
+        DOCKER_WORKDIR: ${DOCKER_WORKDIR}
+    # run this command after finishing base stage
+    command: npm run dev:local  
+    # connect port in container to port locally
     ports:
       - 3001:3001
+    # connect local src to containers src folder
+    volumes:
+      - ./src:${DOCKER_WORKDIR}/src
+      # - ./package.json:/package.json
+      # - ./package-lock.json:/package-lock.json
+      # - ./tsconfig.json:/tsconfig.json

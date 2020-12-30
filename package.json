@@ -8,9 +8,10 @@
   "scripts": {
     "build": "tsc",
     "start": "dotenv -- node ./dist/server.js",
-    "dev": "dotenv -- tsnd --files --respawn src/server.ts",
-    "build:doc": "docker build --build-arg %NODE_ENV% -t gaulish-api .",
-    "dev:doc": "docker run --rm --name gaulish-api -p 3001:3001 -v $INIT_CWD:/usr/src gaulish-api",
+    "dev:local": "dotenv -- tsnd --poll --files --respawn src/server.ts",
+    "doc:build": "dotenv -- cross-var docker build --build-arg DOCKER_WORKDIR=%DOCKER_WORKDIR% -t gaulish-api .",
+    "doc:run": "docker run --rm --name gaulish-api -p 3001:3001 -v $INIT_CWD:/usr/src gaulish-api",
+    "dev": "docker-compose up --build",
     "lint": "eslint . --fix"
   },
   "dependencies": {
