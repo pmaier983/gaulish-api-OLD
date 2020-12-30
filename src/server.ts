@@ -1,5 +1,6 @@
 import express from "express"
 import postgraphile from "postgraphile"
+import compression from "compression"
 
 const app = express()
 
@@ -10,6 +11,8 @@ const {
   RDS_DATABASE,
   GRAPHQL_PORT,
 } = process.env
+
+app.use(compression())
 
 app.use(
   postgraphile(
