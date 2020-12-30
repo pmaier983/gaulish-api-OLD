@@ -1,0 +1,18 @@
+services:
+  api:
+    build:
+      # tell docker to look at the current folder for the dockerfile/image
+      context: .
+      # use the `base` multi-stage... stage
+      target: base
+    # run this command after finishing base stage
+    command: npm run dev:local  
+    # connect port in container to port locally
+    ports:
+      - 3001:3001
+    # connect local src to containers src folder
+    volumes:
+      - ./src:${DOCKER_WORKDIR}/src
+      - ./package.json:${DOCKER_WORKDIR}/package.json
+      - ./package-lock.json:${DOCKER_WORKDIR}/package-lock.json
+      - ./tsconfig.json:${DOCKER_WORKDIR}/tsconfig.json
