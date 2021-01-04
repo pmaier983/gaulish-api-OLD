@@ -6,4 +6,3 @@ services:
     # connect port in container to port locally
     ports:
       - 3001:3001
-    # connect local src to containers src folder
