@@ -23,6 +23,10 @@ app.use(
       watchPg: true,
       graphiql: true,
       enhanceGraphiql: true,
+      pgSettings: {
+        // This will help prevent DDoS attacks
+        statement_timeout: "6000",
+      },
     }
   )
 )
