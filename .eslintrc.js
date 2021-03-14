@@ -19,6 +19,7 @@ module.exports = {
   globals: {
     Atomics: "readonly",
     SharedArrayBuffer: "readonly",
+    React: "writable",
   },
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -38,8 +39,7 @@ module.exports = {
     "@typescript-eslint/explicit-function-return-type": OFF,
     "@typescript-eslint/interface-name-prefix": OFF,
     "@typescript-eslint/semi": OFF,
-    "@typescript-eslint/no-unused-vars": ERROR,
-    "@typescript-eslint/no-var-requires": WARN,
+    "@typescript-eslint/no-unused-vars": WARN,
     "import/prefer-default-export": OFF,
     "space-infix-ops": OFF,
   },
