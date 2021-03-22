@@ -4,8 +4,8 @@ MVP Plan:
 
 On-Login
 
-- Q createUser/modifyUserInfo etc. // hopefully I can use some auth solution
-- Q verifyUser (password, username) => user
+- Q createUser (password, username, email) => user
+- Q loginUser/verifyUser? (password, username) => user
 - Q getUserInfo => gold?
 
 - Q getMapSection (size, x, y) => map matrix
