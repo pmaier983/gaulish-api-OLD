@@ -1,24 +1,15 @@
 ### API for Gaulish.io
 
-PATHWAYS:
+MVP Plan:
 
 On-Login
 
-- Q verifyUser (password, username) => token
-- Q getUserStats (uuid) => gold?
-- Q getItems (uuid) => items (on ship & items)
+- Q createUser/modifyUserInfo etc. // hopefully I can use some auth solution
+- Q verifyUser (password, username) => user
+- Q getUserInfo => gold?
 
-- Q getMap (size, center tile_id?) => [number, number][]
-- Q getShips (uuid) => ship[] (both moving and docked) // subscription
-- Q getEnemies (uuid?) => enemies[] // subscription?
+- Q getMapSection (size, x, y) => map matrix
+- Q getEnemies (size, x, y) => enemies[]
+- Q getShips (size, x, y) => ships[]
 
-Actions (Ship Journeys)
-
-- M sendShipOnJourney (ship, path) => ship&path
-
-City
-
-- Q getItemsForPurchase (city, modifier) => items[]
-- Q getCargoPrices (city) => prices[]
-- M purchaseCargoFromCity (uuid) => cargo
-- M sellToCity (item, amount, price?) => new cargo
+- M sendShipOnJourney (ship_id, uuid?, shipPath) =>
