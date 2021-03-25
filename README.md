@@ -12,4 +12,4 @@ On-Login
 - Q getEnemies (size, x, y) => enemies[]
 - Q getShips (size, x, y) => ships[]
 
-- M sendShipOnJourney (ship_id, uuid?, shipPath) =>
+- M sendShipOnJourney (ship_id, uuid?, shipPath) => boolean
