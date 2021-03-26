@@ -1,8 +1,0 @@
-services:
-  api:
-    build:
-      # tell docker to look at the current folder for the dockerfile/image
-      context: .
-    # connect port in container to port locally
-    ports:
-      - 3001:3001
