@@ -2,6 +2,8 @@ import express from "express"
 import { graphqlHTTP } from "express-graphql"
 import { buildSchema } from "graphql"
 
+// TODO: set things up using docker
+
 // Create a server:
 const app = express()
 
