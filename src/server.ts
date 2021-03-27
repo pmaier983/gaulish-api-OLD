@@ -2,7 +2,8 @@ import express from "express"
 import { graphqlHTTP } from "express-graphql"
 import { buildSchema } from "graphql"
 
-// TODO: set things up using docker
+// TODO: GZIP response
+// TODO: setup a dataLoader
 
 // Create a server:
 const app = express()
@@ -37,6 +38,7 @@ app.use(
   graphqlHTTP({
     schema,
     rootValue,
+    graphiql: process.env.NODE_ENV === "development",
   })
 )
 
