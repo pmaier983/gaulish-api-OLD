@@ -5,6 +5,7 @@ export const typeDefs = gql`
     books: [Book]
   }
   type Book implements Node {
+    id: ID!
     title: String!
     author: String!
   }
