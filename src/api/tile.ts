@@ -1,5 +1,8 @@
 import gql from "graphql-tag"
 
+// TODO handle typescript global import path thing
+import { query } from "../database"
+
 export const typeDefs = gql`
   extend type Query {
     tiles: [Tile]
@@ -14,13 +17,9 @@ export const typeDefs = gql`
 
 export const resolvers = {
   Query: {
-    tiles: async (props) => [
-      {
-        id: 1,
-        tile_id: 1,
-        x: 1,
-        y: 1,
-      },
-    ],
+    tiles: async () => {
+      const res = await query("SELECT * from public.tile")
+      return res.rows
+    },
   },
 }

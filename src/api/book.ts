@@ -13,17 +13,23 @@ export const typeDefs = gql`
 
 export const resolvers = {
   Query: {
-    books: async (props) => [
-      {
-        id: 1,
-        title: "The Name of the Wind",
-        author: "Patrick Rothfuss",
-      },
-      {
-        id: 2,
-        title: "The Wise Man's Fear",
-        author: "Patrick Rothfuss",
-      },
-    ],
+    books: async (props) => {
+      return await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve([
+            {
+              id: 1,
+              title: "The Name of the Wind",
+              author: "Patrick Rothfuss",
+            },
+            {
+              id: 2,
+              title: "The Wise Man's Fear",
+              author: "Patrick Rothfuss",
+            },
+          ])
+        }, 1000)
+      })
+    },
   },
 }
