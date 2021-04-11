@@ -36,7 +36,9 @@ module.exports = {
     },
   },
   rules: {
+    // TODO: is there a way to only enable these rules when unable to inferrable
     "@typescript-eslint/explicit-function-return-type": OFF,
+    "@typescript-eslint/explicit-module-boundary-types": OFF,
     "@typescript-eslint/interface-name-prefix": OFF,
     "@typescript-eslint/semi": OFF,
     "@typescript-eslint/no-unused-vars": WARN,

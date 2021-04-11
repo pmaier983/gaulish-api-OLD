@@ -13,4 +13,4 @@ const pool = pgPromise({})({
 
 // TODO: set this thing up to handle transactions
 // TODO: properly type query
-export const query = (props) => pool.query(props)
+export default pool
