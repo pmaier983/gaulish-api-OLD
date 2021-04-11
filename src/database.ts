@@ -1,10 +1,9 @@
-import Pool from "pg-pool"
+import pgPromise from "pg-promise"
 
 const { RDS_USER, RDS_PASSWORD, RDS_HOST, RDS_DATABASE, RDS_PORT } = process.env
 
-// console.log(parseInt(GRAPHQL_PORT, 10))
-
-const pool = new Pool({
+// TODO: look into pg-promise config options
+const pool = pgPromise({})({
   user: RDS_USER,
   host: RDS_HOST,
   database: RDS_DATABASE,
