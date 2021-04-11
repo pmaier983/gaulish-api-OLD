@@ -1,4 +1,4 @@
-import { Pool } from "pg"
+import Pool from "pg-pool"
 
 const { RDS_USER, RDS_PASSWORD, RDS_HOST, RDS_DATABASE, RDS_PORT } = process.env
 
