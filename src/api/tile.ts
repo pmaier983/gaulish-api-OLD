@@ -19,7 +19,7 @@ export const resolvers = {
   Query: {
     tiles: async () => {
       const res = await db.query("SELECT * from public.tile")
-      return res.rows
+      return res
     },
   },
 }
