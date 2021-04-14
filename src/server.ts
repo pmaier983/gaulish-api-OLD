@@ -11,6 +11,7 @@ const app = express()
 
 // Use those to handle incoming requests:
 app.use(
+  "/graphql",
   graphqlHTTP({
     schema,
     graphiql: process.env.NODE_ENV === "development",

@@ -12,7 +12,8 @@
     "doc:run": "docker run --rm --name gaulish-api -p 3001:3001 -v $INIT_CWD:/usr/src gaulish-api",
     "dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
     "dev:local": "dotenv -- tsnd --poll --files --respawn src/server.ts",
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "generate-types": "graphql-codegen --config codegen.yml && npm run lint"
   },
   "dependencies": {
     "express": "^5.0.0-alpha.7",
@@ -26,6 +27,8 @@
     "pg-promise": "^10.10.1"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "1.21.3",
+    "@graphql-codegen/typescript": "^1.21.1",
     "@types/express": "^4.17.9",
     "@types/lodash": "^4.14.168",
     "@types/passport": "^1.0.6",
