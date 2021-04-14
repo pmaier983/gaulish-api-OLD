@@ -15,7 +15,7 @@
     "baseUrl": "src",
     "paths": {
       "@/*": ["*"],
-      "@/graphql-types": ["../generated/graphql"]
+      "@/graphql-types": ["./generated/graphql.ts"]
     },
   },
   "include": ["src/**/*.ts"],
