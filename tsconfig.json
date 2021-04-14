@@ -2,7 +2,7 @@
   "compilerOptions": {
     "experimentalDecorators": true,
     "module": "commonjs",
-    "target": "es6",
+    "target": "ESNext",
     "lib": ["esnext"],
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
@@ -10,8 +10,13 @@
     "emitDecoratorMetadata": true,
     "sourceMap": true,
     "declaration": true,
-    "outDir": "./dist",
     "removeComments": true,
+    "outDir": "./dist",
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"],
+      "@/graphql-types": ["../generated/graphql"]
+    },
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]

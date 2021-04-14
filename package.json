@@ -11,7 +11,7 @@
     "doc:build": "dotenv -- cross-var docker build --build-arg DOCKER_WORKDIR=%DOCKER_WORKDIR% -t gaulish-api .",
     "doc:run": "docker run --rm --name gaulish-api -p 3001:3001 -v $INIT_CWD:/usr/src gaulish-api",
     "dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
-    "dev:local": "dotenv -- tsnd --poll --files --respawn src/server.ts",
+    "dev:local": "dotenv -- tsnd -r tsconfig-paths/register --poll --files --respawn src/server.ts",
     "lint": "eslint . --fix",
     "generate-types": "graphql-codegen --config codegen.yml && npm run lint"
   },
@@ -44,6 +44,7 @@
     "lint-staged": "^10.5.3",
     "prettier": "^2.2.1",
     "ts-node-dev": "^1.1.1",
+    "tsconfig-paths": "^3.9.0",
     "typescript": "^4.1.3"
   }
 }

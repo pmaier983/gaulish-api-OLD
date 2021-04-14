@@ -1,7 +1,7 @@
 import gql from "graphql-tag"
 
 // TODO handle typescript global import path thing
-import db from "../database"
+import db from "@/database"
 
 export const typeDefs = gql`
   extend type Query {
