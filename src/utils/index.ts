@@ -10,7 +10,7 @@ export const addGlobalID = <arrayItem>(
   return array.map((item) => ({
     ...item,
     // binary to handle non-ascii characters
-    id: Buffer.from(`${table_title}:${_.get(path, item)}`, "binary").toString(
+    id: Buffer.from(`${table_title}:${item?.[path]}`, "binary").toString(
       "base64"
     ),
   }))

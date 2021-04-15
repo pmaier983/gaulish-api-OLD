@@ -1,8 +1,6 @@
 import gql from "graphql-tag"
 
-// TODO handle typescript global import path thing
-import db from "@/database"
-import { Tile } from "@/graphql-types"
+import { Resolvers, Tile } from "@/graphql-types"
 import { addGlobalID } from "@/utils"
 
 // TODO use edge's to link User & their owned boats
@@ -18,11 +16,10 @@ export const typeDefs = gql`
   }
 `
 
-export const resolvers = {
+export const resolvers: Resolvers = {
   Query: {
-    tiles: async () => {
-      const res = await db.query<Tile[]>("SELECT * from public.tile")
-      // TODO: what is the best way to set these ids?
+    tiles: async (obj, args, context) => {
+      const res: Tile[] = await context.db.query("SELECT * from public.tile")
       return addGlobalID("tile", "tile_id", res)
     },
   },

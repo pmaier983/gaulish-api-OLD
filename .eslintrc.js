@@ -42,6 +42,7 @@ module.exports = {
     "@typescript-eslint/interface-name-prefix": OFF,
     "@typescript-eslint/semi": OFF,
     "@typescript-eslint/no-unused-vars": WARN,
+    "@typescript-eslint/ban-types": WARN, // WARN as Codegen generates a lot of {}
     "import/prefer-default-export": OFF,
     "space-infix-ops": OFF,
   },

@@ -3,4 +3,8 @@ schema: "http://localhost:8080/graphql"
 generates:
   src/generated/graphql.ts:
     plugins:
+      - "typescript-resolvers"
       - "typescript"
+    config:
+      showUnusedMappers: true
+      contextType: ../context#Context
