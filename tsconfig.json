@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
     "experimentalDecorators": true,
-    "module": "commonjs",
+    "module": "CommonJS", // How to use ESNext?
     "target": "ESNext",
-    "lib": ["esnext"],
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
