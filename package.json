@@ -11,11 +11,12 @@
     "doc:build": "dotenv -- cross-var docker build --build-arg DOCKER_WORKDIR=%DOCKER_WORKDIR% -t gaulish-api .",
     "doc:run": "docker run --rm --name gaulish-api -p 3001:3001 -v $INIT_CWD:/usr/src gaulish-api",
     "dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
-    "dev:local": "dotenv -- tsnd -r tsconfig-paths/register --poll --files --respawn src/server.ts",
+    "dev:local": "dotenv -- tsnd --inspect-brk=9230 -r tsconfig-paths/register --poll --files --respawn src/server.ts",
     "lint": "eslint . --fix",
     "generate-types": "graphql-codegen --config codegen.yml && npm run lint"
   },
   "dependencies": {
+    "dataloader": "^2.0.0",
     "express": "^5.0.0-alpha.7",
     "express-graphql": "^0.12.0",
     "graphql-tag": "^2.11.0",
