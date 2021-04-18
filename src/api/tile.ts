@@ -10,6 +10,7 @@ export const typeDefs = gql`
     getAllTiles: [Tile]
     getTilesWithinRectangle: [Tile]
     getTilesAroundTile: [Tile]
+    getTileByID: Tile
   }
   type Tile implements Node {
     id: ID!
@@ -27,14 +28,17 @@ export const resolvers = {
       return addGlobalID("tile", "tile_id", tiles)
     },
     getTilesWithinRectangle: async (obj, args, context) => {
-      // TODO: setup with data loader?
-      // const tiles: Tile[] = await context.db.query("SELECT * from public.tile")
+      // TODO: build some magic sql to get this
       return [{ id: 1, tile_id: "1", x: 0, y: 0 }]
     },
     getTilesAroundTile: async (obj, args, context) => {
-      // TODO: setup with data loader?
-      // const tiles: Tile[] = await context.db.query("SELECT * from public.tile")
+      // TODO: build some magic sql to get this
       return [{ id: 1, tile_id: "1", x: 0, y: 0 }]
+    },
+    getTileByID: async (obj, args, context) => {
+      // TODO: set this up with a data loader
+      // SELECT BY ID --- vai data loader
+      return { id: 1, tile_id: "1", x: 0, y: 0 }
     },
   },
 }

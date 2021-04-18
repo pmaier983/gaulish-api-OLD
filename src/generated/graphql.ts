@@ -162,6 +162,17 @@ export type QueryResolvers<
     ParentType,
     ContextType
   >
+  getTilesWithinRectangle?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes["Tile"]>>>,
+    ParentType,
+    ContextType
+  >
+  getTilesAroundTile?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes["Tile"]>>>,
+    ParentType,
+    ContextType
+  >
+  getTileByID?: Resolver<Maybe<ResolversTypes["Tile"]>, ParentType, ContextType>
 }
 
 export type TileResolvers<
@@ -203,6 +214,9 @@ export type Node = {
 export type Query = {
   __typename?: "Query"
   getAllTiles?: Maybe<Array<Maybe<Tile>>>
+  getTilesWithinRectangle?: Maybe<Array<Maybe<Tile>>>
+  getTilesAroundTile?: Maybe<Array<Maybe<Tile>>>
+  getTileByID?: Maybe<Tile>
 }
 
 export type Tile = Node & {
