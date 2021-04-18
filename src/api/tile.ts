@@ -2,11 +2,14 @@ import gql from "graphql-tag"
 
 import { Resolvers, Tile } from "@/graphql-types"
 import { addGlobalID } from "@/utils"
+import DataLoader from "dataloader"
 
 // TODO use edge's to link User & their owned boats
 export const typeDefs = gql`
   extend type Query {
-    tiles: [Tile]
+    getAllTiles: [Tile]
+    getTilesWithinRectangle: [Tile]
+    getTilesAroundTile: [Tile]
   }
   type Tile implements Node {
     id: ID!
@@ -16,11 +19,22 @@ export const typeDefs = gql`
   }
 `
 
-export const resolvers: Resolvers = {
+export const resolvers = {
   Query: {
-    tiles: async (obj, args, context) => {
-      const res: Tile[] = await context.db.query("SELECT * from public.tile")
-      return addGlobalID("tile", "tile_id", res)
+    getAllTiles: async (obj, args, context) => {
+      // TODO: how to not Select *. Use fieldNodes.selectionSet?
+      const tiles: Tile[] = await context.db.query("SELECT * from public.tile")
+      return addGlobalID("tile", "tile_id", tiles)
+    },
+    getTilesWithinRectangle: async (obj, args, context) => {
+      // TODO: setup with data loader?
+      // const tiles: Tile[] = await context.db.query("SELECT * from public.tile")
+      return [{ id: 1, tile_id: "1", x: 0, y: 0 }]
+    },
+    getTilesAroundTile: async (obj, args, context) => {
+      // TODO: setup with data loader?
+      // const tiles: Tile[] = await context.db.query("SELECT * from public.tile")
+      return [{ id: 1, tile_id: "1", x: 0, y: 0 }]
     },
   },
 }

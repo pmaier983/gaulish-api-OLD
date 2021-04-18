@@ -157,7 +157,7 @@ export type QueryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
 > = {
-  tiles?: Resolver<
+  getAllTiles?: Resolver<
     Maybe<Array<Maybe<ResolversTypes["Tile"]>>>,
     ParentType,
     ContextType
@@ -202,7 +202,7 @@ export type Node = {
 
 export type Query = {
   __typename?: "Query"
-  tiles?: Maybe<Array<Maybe<Tile>>>
+  getAllTiles?: Maybe<Array<Maybe<Tile>>>
 }
 
 export type Tile = Node & {
