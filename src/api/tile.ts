@@ -5,6 +5,7 @@ import { addGlobalID } from "@/utils"
 import DataLoader from "dataloader"
 
 // TODO use edge's to link User & their owned boats
+// https://www.apollographql.com/blog/explaining-graphql-connections-c48b7c3d6976/
 export const typeDefs = gql`
   extend type Query {
     getAllTiles: [Tile]

@@ -3,6 +3,7 @@ import pgPromise from "pg-promise"
 const { RDS_USER, RDS_PASSWORD, RDS_HOST, RDS_DATABASE, RDS_PORT } = process.env
 
 // TODO: look into pg-promise config options
+// TODO: setup some "sql views" to make queries efficient!
 const db = pgPromise({})({
   user: RDS_USER,
   host: RDS_HOST,
