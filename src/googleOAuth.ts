@@ -69,7 +69,7 @@ export const googleOAuthStrategy = new GoogleStrategy(
     }
 
     const user = await db.query(
-      "SELECT (email, time_created, username, uuid,) username_update_time FROM public.user WHERE email = $1",
+      "SELECT email, time_created, username, uuid, username_update_time FROM public.user WHERE email = $1",
       userEmail
     )
 
