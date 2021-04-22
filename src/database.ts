@@ -13,4 +13,5 @@ const db = pgPromise({})({
 })
 
 // TODO: setup logging (speed & error)
+// Winston? aws-alternative?
 export default db
