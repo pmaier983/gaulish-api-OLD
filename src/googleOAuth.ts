@@ -22,7 +22,7 @@ export const googleOAuthStrategy = new GoogleStrategy(
       if (!profile.email_verified || !profile.verified) {
         // prevent a unverified user from creating an account to avoid
         // account theft via fake email creation (once I have multiple Auths setup)
-        return done(Error("You must verify your Account to log in"))
+        return done(Error("You must verify your Gmail Account to log in"))
       }
 
       const userEmail = profile.email
@@ -35,7 +35,9 @@ export const googleOAuthStrategy = new GoogleStrategy(
 
       // If there are multiple users with the same email in the db something went wrong
       if (countOfUsersInDb > 1) {
-        return done(Error("Something went wrong, Please try again"))
+        return done(
+          Error("There seems to be two of you... Something must be wrong")
+        )
       }
 
       // TODO: Possible better pepper strategy out there (symmetrical encryption)
@@ -68,7 +70,7 @@ export const googleOAuthStrategy = new GoogleStrategy(
       // This should never happen...
       if (!fullUser) {
         // TODO add logging here
-        return done(Error("Something went wrong, Please try again"))
+        return done(Error("You don't seem to exist... Something went wrong"))
       }
 
       const { password, ...userLessPassword } = fullUser
@@ -76,7 +78,7 @@ export const googleOAuthStrategy = new GoogleStrategy(
       const isPasswordVerified = await argon2.verify(password, userRawPassword)
 
       if (!isPasswordVerified) {
-        return done(Error("Your username and password did not match"))
+        return done(Error("Your username and/or password did not match"))
       }
 
       done(null, userLessPassword)
