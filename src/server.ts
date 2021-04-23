@@ -22,22 +22,16 @@ app.get("/google/success", (req, res) => {
   return res.send(`You're in Phillip`)
 })
 
+// TODO: send back with error
 app.get("/google/failure", (req, res) => res.send(`No Touch!`))
 
 app.get(
   "/google",
   passport.authenticate("google", {
     scope: ["email", "profile"],
-    session: false,
-  })
-)
-
-app.get(
-  "/google/callback",
-  passport.authenticate("google", {
     successRedirect: "/google/success",
     failureRedirect: "/google/failure",
-    session: false, // duplicate session false needed?
+    session: false,
   })
 )
 

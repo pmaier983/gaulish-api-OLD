@@ -13,7 +13,7 @@ export const googleOAuthStrategy = new GoogleStrategy(
   {
     clientID: GOOGLE_OAUTH_CLIENT_ID,
     clientSecret: GOOGLE_OAUTH_CLIENT_SECRET,
-    callbackURL: "http://localhost:8080/google/callback",
+    callbackURL: "http://localhost:8080/google",
     passReqToCallback: true,
   },
   // TODO: use a task
