@@ -16,6 +16,31 @@ const app = express()
 app.use(passport.initialize())
 
 passport.use(googleOAuthStrategy)
+// TODO: change all of these to GRAPHQL (/graphql) url if possible!
+app.get("/google/success", (req, res) => {
+  // TODO: send back to home page with JWT?
+  return res.send(`You're in Phillip`)
+})
+
+app.get("/google/failure", (req, res) => res.send(`No Touch!`))
+
+app.get(
+  "/google",
+  passport.authenticate("google", {
+    scope: ["email", "profile"],
+    session: false,
+  })
+)
+
+app.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    successRedirect: "/google/success",
+    failureRedirect: "/google/failure",
+    session: false, // duplicate session false needed?
+  })
+)
+
 // Use those to handle incoming requests:
 app.use(
   "/graphql",
