@@ -1,9 +1,8 @@
 import db from "@/database"
-import pgPromise from "pg-promise"
-import pg from "pg-promise/typescript/pg-subset"
+import { Database } from "database"
 
 export interface Context {
-  db: pgPromise.IDatabase<any, pg.IClient>
+  db: Database
 }
 
 export const context: Context = {
