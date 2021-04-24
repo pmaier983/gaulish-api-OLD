@@ -78,9 +78,11 @@ export const googleOAuthStrategy = new GoogleStrategy(
       const isPasswordVerified = await argon2.verify(password, userRawPassword)
 
       if (!isPasswordVerified) {
-        return done(Error("Your username and/or password did not match"))
+        return done(null, false, {
+          message: "Your username and/or password did not match",
+        })
       }
 
-      done(null, userLessPassword)
+      return done(null, userLessPassword)
     })
 )
