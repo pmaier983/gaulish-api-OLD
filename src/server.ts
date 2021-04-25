@@ -5,24 +5,24 @@ import jwt from "jsonwebtoken"
 
 import db from "@/database"
 import { schema } from "./schema"
-import { googleOAuthStrategy } from "./googleOAuth"
+import { googleOAuthStrategy } from "./googleOAuthStrategy"
 
 // TODO: GZIP response
 // TODO: setup a dataLoader
 // TODO: setup some database mocking (msw, json-server, etc?)
 // TODO: setup some bundle size reporter?
 
-const { JWT_SECRET } = process.env
-
 // Create a server:
 const app = express()
 
 app.use(passport.initialize())
 
+// SETUP user creation and verification
 passport.use(googleOAuthStrategy)
 
 app.get(
   "/google",
+  // TODO: handle if req already has a JWT?
   passport.authenticate("google", {
     scope: ["profile", "email"],
     session: false,
@@ -36,7 +36,9 @@ app.get(
     // TODO best patter for api responses?
     res.send({
       user: req?.user,
-      token: jwt.sign(req.user, JWT_SECRET, { expiresIn: "30 days" }),
+      token: jwt.sign(req.user, process.env.JWT_SECRET, {
+        expiresIn: "30 days",
+      }),
     })
   }
 )
@@ -44,15 +46,21 @@ app.get(
 // Use those to handle incoming requests:
 app.use(
   "/graphql",
-  graphqlHTTP({
+  graphqlHTTP(async (req) => ({
     schema,
-    // TODO setup passport-jwt auth.
     context: {
       db,
+      // TODO: is there a better way to do this?
+      user: req?.headers?.authorization
+        ? jwt.verify(
+            req.headers.authorization?.slice(7),
+            process.env.JWT_SECRET
+          )
+        : null,
     },
     // TODO is there a better pattern then this IIFE?
     ...(() => {
-      if (process.env.NODE_ENV === "development")
+      if (process.env.NODE_ENV === "development") {
         return {
           graphiql: true,
           customFormatErrorFn: (error) => ({
@@ -62,11 +70,12 @@ app.use(
             path: error.path,
           }),
         }
+      }
     })(),
-  })
+  }))
 )
 
 // Start the server:
 app.listen(8080, () =>
-  console.log("Server started on port http://localhost:8080")
+  console.log("Server started on port http://localhost:8080/graphql")
 )
