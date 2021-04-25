@@ -21,7 +21,6 @@ app.use(passport.initialize())
 
 passport.use(googleOAuthStrategy)
 
-// TODO: change all of these to GRAPHQL (/graphql) url if possible!
 app.get(
   "/google",
   passport.authenticate("google", {
