@@ -1,5 +1,9 @@
 import { GraphQLResolveInfo } from "graphql"
 import { Context } from "../context"
+export type RequireFields<T, K extends keyof T> = {
+  [X in Exclude<keyof T, K>]?: T[X]
+} &
+  { [P in K]-?: NonNullable<T[P]> }
 export type Maybe<T> = T | null
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K]
@@ -127,9 +131,10 @@ export type DirectiveResolverFn<
 export type ResolversTypes = {
   Node: ResolversTypes["Tile"]
   ID: ResolverTypeWrapper<Scalars["ID"]>
+  Point: Point
+  Int: ResolverTypeWrapper<Scalars["Int"]>
   Query: ResolverTypeWrapper<{}>
   Tile: ResolverTypeWrapper<Tile>
-  Int: ResolverTypeWrapper<Scalars["Int"]>
   Boolean: ResolverTypeWrapper<Scalars["Boolean"]>
   String: ResolverTypeWrapper<Scalars["String"]>
 }
@@ -138,9 +143,10 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   Node: ResolversParentTypes["Tile"]
   ID: Scalars["ID"]
+  Point: Point
+  Int: Scalars["Int"]
   Query: {}
   Tile: Tile
-  Int: Scalars["Int"]
   Boolean: Scalars["Boolean"]
   String: Scalars["String"]
 }
@@ -165,14 +171,21 @@ export type QueryResolvers<
   getTilesWithinRectangle?: Resolver<
     Maybe<Array<Maybe<ResolversTypes["Tile"]>>>,
     ParentType,
-    ContextType
+    ContextType,
+    RequireFields<QueryGetTilesWithinRectangleArgs, never>
   >
   getTilesAroundTile?: Resolver<
     Maybe<Array<Maybe<ResolversTypes["Tile"]>>>,
     ParentType,
-    ContextType
+    ContextType,
+    RequireFields<QueryGetTilesAroundTileArgs, never>
   >
-  getTileByID?: Resolver<Maybe<ResolversTypes["Tile"]>, ParentType, ContextType>
+  getTileByID?: Resolver<
+    Maybe<ResolversTypes["Tile"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetTileByIdArgs, never>
+  >
 }
 
 export type TileResolvers<
@@ -211,12 +224,31 @@ export type Node = {
   id: Scalars["ID"]
 }
 
+export type Point = {
+  x?: Maybe<Scalars["Int"]>
+  y?: Maybe<Scalars["Int"]>
+}
+
 export type Query = {
   __typename?: "Query"
   getAllTiles?: Maybe<Array<Maybe<Tile>>>
   getTilesWithinRectangle?: Maybe<Array<Maybe<Tile>>>
   getTilesAroundTile?: Maybe<Array<Maybe<Tile>>>
   getTileByID?: Maybe<Tile>
+}
+
+export type QueryGetTilesWithinRectangleArgs = {
+  pointA?: Maybe<Point>
+  pointB?: Maybe<Point>
+}
+
+export type QueryGetTilesAroundTileArgs = {
+  point?: Maybe<Point>
+  radius?: Maybe<Scalars["Int"]>
+}
+
+export type QueryGetTileByIdArgs = {
+  tileId?: Maybe<Scalars["Int"]>
 }
 
 export type Tile = Node & {
