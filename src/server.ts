@@ -4,6 +4,8 @@ import { graphqlHTTP } from "express-graphql"
 import jwt from "jsonwebtoken"
 
 import db from "@/database"
+
+import { dataLoaders } from "./dataloaders"
 import { schema } from "./schema"
 import { googleOAuthStrategy } from "./googleOAuthStrategy"
 
@@ -50,6 +52,7 @@ app.use(
     schema,
     context: {
       db,
+      dataLoaders,
       // TODO: is there a better way to do this?
       // setup more advanced JWT auth (JWT should only contain user ID)
       user: req?.headers?.authorization

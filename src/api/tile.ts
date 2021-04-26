@@ -2,7 +2,6 @@ import gql from "graphql-tag"
 
 import { Resolvers, Tile } from "@/graphql-types"
 import { addGlobalID } from "@/utils"
-import DataLoader from "dataloader"
 
 // TODO use edge's to link User & their owned boats
 // https://www.apollographql.com/blog/explaining-graphql-connections-c48b7c3d6976/
@@ -66,12 +65,8 @@ export const resolvers: Resolvers = {
       return addGlobalID<Tile[]>("tile", "tile_id", tiles)
     },
     getTileByID: async (obj, { tileId }, context) => {
-      // TODO: set this up with a data loader
-      // SELECT BY ID --- vai data loader
-      const tile: Tile = await context.db.one(
-        "SELECT * FROM public.tile WHERE tile_id = $1",
-        tileId
-      )
+      const tile: Tile = await context.dataLoaders.tileDataLoader.load(tileId)
+      console.log(tile)
       return addGlobalID<Tile>("tile", "tile_id", tile)
     },
   },
