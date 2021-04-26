@@ -29,6 +29,7 @@ export const googleOAuthStrategy = new GoogleStrategy(
       const userEmail = profile.email
 
       const countOfUsersInDb = await t.oneOrNone(
+        // TODO is count(*) bad?
         "SELECT count(*) FROM public.user WHERE email = $1",
         userEmail,
         ({ count }) => parseInt(count, 10)

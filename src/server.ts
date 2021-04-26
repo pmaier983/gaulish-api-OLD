@@ -51,6 +51,7 @@ app.use(
     context: {
       db,
       // TODO: is there a better way to do this?
+      // setup more advanced JWT auth (JWT should only contain user ID)
       user: req?.headers?.authorization
         ? jwt.verify(
             req.headers.authorization?.slice(7),
