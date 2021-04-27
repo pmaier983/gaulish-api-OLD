@@ -1,5 +1,6 @@
 import express from "express"
 import passport from "passport"
+import compression from "compression"
 import { graphqlHTTP } from "express-graphql"
 import jwt from "jsonwebtoken"
 
@@ -9,8 +10,6 @@ import { dataLoaders } from "./dataloaders"
 import { schema } from "./schema"
 import { googleOAuthStrategy } from "./googleOAuthStrategy"
 
-// TODO: GZIP response
-// TODO: setup a dataLoader
 // TODO: setup some database mocking (msw, json-server, etc?)
 // TODO: setup some bundle size reporter?
 
@@ -19,8 +18,11 @@ const app = express()
 
 app.use(passport.initialize())
 
-// SETUP user creation and verification
+// SETUP user creation & Auth
 passport.use(googleOAuthStrategy)
+
+// compress all requests
+app.use(compression())
 
 app.get(
   "/google",

@@ -66,7 +66,6 @@ export const resolvers: Resolvers = {
     },
     getTileByID: async (obj, { tileId }, context) => {
       const tile: Tile = await context.dataLoaders.tileDataLoader.load(tileId)
-      console.log(tile)
       return addGlobalID<Tile>("tile", "tile_id", tile)
     },
   },
