@@ -37,7 +37,7 @@ app.get(
     if (!req?.user) {
       throw Error("Something went very wrong")
     }
-    // TODO best patter for api responses?
+    // TODO best pattern for api responses?
     res.send({
       user: req?.user,
       token: jwt.sign(req.user, process.env.JWT_SECRET, {

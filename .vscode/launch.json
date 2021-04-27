@@ -8,8 +8,6 @@
       "type": "pwa-node",
       "name": "Attach to Port 9230",
       "request": "attach",
-      // TODO: how to get preLaunchTask working?
-      // "preLaunchTask": "npm: dev",
       "port": 9230,
       "restart": true,
       "skipFiles": [

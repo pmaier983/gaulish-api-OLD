@@ -16,7 +16,6 @@ export const googleOAuthStrategy = new GoogleStrategy(
     callbackURL: "http://localhost:8080/google",
     passReqToCallback: true,
   },
-  // TODO: are both async needed here?
   (req, accessToken, refreshToken, profile, done) =>
     db.task(async (t) => {
       // STEP 1 Check that the user is verified. If not reject.
@@ -29,7 +28,6 @@ export const googleOAuthStrategy = new GoogleStrategy(
       const userEmail = profile.email
 
       const countOfUsersInDb = await t.oneOrNone(
-        // TODO is count(*) bad?
         "SELECT count(*) FROM public.user WHERE email = $1",
         userEmail,
         ({ count }) => parseInt(count, 10)
