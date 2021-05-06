@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    // "strict": true, TODO: Try again
     "experimentalDecorators": true,
     "module": "CommonJS", // How to use ESNext?
     "target": "ESNext",
@@ -17,6 +18,6 @@
       "@/graphql-types": ["./generated/graphql.ts"]
     },
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src", "types"],
   "exclude": ["node_modules"]
 }
