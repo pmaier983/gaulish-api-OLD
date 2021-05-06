@@ -24,11 +24,9 @@ const app = express()
 
 app.use(
   cors({
-    // TODO: add gaulish.io when I get it running
     // TODO: include dash (3000/ vs. 3000) or no...
     origin: isDevEnv ? FRONTEND_DEV_URL : FRONTEND_URL,
-    // TODO: limit this? (remove delete? or...)
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    methods: "GET,PUT,POST,PATCH",
   })
 )
 
@@ -63,7 +61,6 @@ app.get(
   }
 )
 
-// Use those to handle incoming requests:
 app.use(
   "/graphql",
   graphqlHTTP(async (req) => ({
@@ -77,20 +74,15 @@ app.use(
         ? jwt.verify(req.headers.authorization?.slice(7), JWT_SECRET)
         : null,
     },
-    // TODO is there a better pattern then this IIFE?
-    ...(() => {
-      if (isDevEnv) {
-        return {
-          graphiql: true,
-          customFormatErrorFn: (error) => ({
-            message: error.message,
-            locations: error.locations,
-            stack: error.stack ? error.stack.split("\n") : [],
-            path: error.path,
-          }),
-        }
-      }
-    })(),
+    graphiql: isDevEnv ? true : false,
+    customFormatErrorFn: isDevEnv
+      ? (error) => ({
+          message: error.message,
+          locations: error.locations,
+          stack: error.stack ? error.stack.split("\n") : [],
+          path: error.path,
+        })
+      : undefined,
   }))
 )
 
