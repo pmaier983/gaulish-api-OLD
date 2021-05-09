@@ -12,6 +12,7 @@ import { schema } from "./schema"
 import { googleOAuthStrategy } from "./googleOAuthStrategy"
 
 // TODO: setup TypeDocs
+// TODO: can socket.io work with graphql-ws?
 // TODO: setup some database mocking (msw, json-server, etc?)
 // TODO: setup some bundle size reporter?
 
