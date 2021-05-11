@@ -28,7 +28,7 @@ export const typeDefs = gql`
 export const resolvers: Resolvers = {
   // TODO: how to not Select * (Instead Use fieldNodes.selectionSet?)
   Query: {
-    // TODO Setup pagination here
+    // TODO: implement cursor based pagination for loading tiles!
     getAllTiles: async (obj, args, context) => {
       const tiles: Tile[] = await context.db.any("SELECT * from public.tile")
       return addGlobalID<Tile[]>("tile", "tile_id", tiles)
