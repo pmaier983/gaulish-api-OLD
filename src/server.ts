@@ -52,13 +52,12 @@ app.get(
     if (!req?.user) {
       throw Error("Something went very wrong")
     }
-    // TODO best pattern for api responses?
-    res.send({
-      user: req?.user,
-      token: jwt.sign(req.user, JWT_SECRET, {
+    // TODO: how not to send via url
+    res.redirect(
+      `${FRONTEND_DEV_URL}/?token=${jwt.sign(req.user, JWT_SECRET, {
         expiresIn: "30 days",
-      }),
-    })
+      })}`
+    )
   }
 )
 
