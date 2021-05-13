@@ -7,13 +7,14 @@ const {
   GOOGLE_OAUTH_CLIENT_ID,
   GOOGLE_OAUTH_CLIENT_SECRET,
   PASSWORD_PEPPER,
+  GRAPHQL_PORT,
 } = process.env
 
 export const googleOAuthStrategy = new GoogleStrategy(
   {
     clientID: GOOGLE_OAUTH_CLIENT_ID,
     clientSecret: GOOGLE_OAUTH_CLIENT_SECRET,
-    callbackURL: "http://localhost:8080/google",
+    callbackURL: `http://localhost:${GRAPHQL_PORT}/google`,
     passReqToCallback: true,
   },
   (req, accessToken, refreshToken, profile, done) =>
