@@ -7,9 +7,9 @@ import cors from "cors"
 
 import db from "@/database"
 
-import { dataLoaders } from "./dataloaders"
+import { dataLoaders } from "./dataLoaders"
 import { schema } from "./schema"
-import { googleOAuthStrategy } from "./googleOAuthStrategy"
+import { googleOAuthStrategy, authCallback } from "./auth"
 
 // TODO: setup TypeDocs
 // TODO: can socket.io work with graphql-ws?
@@ -39,6 +39,7 @@ passport.use(googleOAuthStrategy)
 // compress all requests
 app.use(compression())
 
+// TODO: auth/callback
 app.get(
   "/google",
   // TODO: handle if req already has a JWT?
@@ -47,18 +48,7 @@ app.get(
     session: false,
     passReqToCallback: true,
   }),
-  (req, res) => {
-    // TODO: how to properly handle Errors next(error?)
-    if (!req?.user) {
-      throw Error("Something went very wrong")
-    }
-    // TODO: how not to send via url
-    res.redirect(
-      `${FRONTEND_DEV_URL}/?token=${jwt.sign(req.user, JWT_SECRET, {
-        expiresIn: "30 days",
-      })}`
-    )
-  }
+  authCallback
 )
 
 app.use(

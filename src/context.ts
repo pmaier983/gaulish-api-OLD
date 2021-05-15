@@ -1,6 +1,6 @@
 import db from "@/database"
 import { Database } from "database"
-import { DataLoaders, dataLoaders } from "./dataloaders"
+import { DataLoaders, dataLoaders } from "./dataLoaders"
 
 export interface Context {
   db: Database
