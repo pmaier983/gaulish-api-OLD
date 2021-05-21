@@ -12,6 +12,7 @@ const {
   JWT_SECRET,
 } = process.env
 
+// TODO: setup refresh token pattern
 export const OAuthHandler = (
   profile, // TODO: PR to update Profile interface email_verified
   done: (
