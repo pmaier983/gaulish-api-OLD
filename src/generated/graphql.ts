@@ -129,33 +129,35 @@ export type DirectiveResolverFn<
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  Node: ResolversTypes["Tile"]
+  Node: ResolversTypes["Tile"] | ResolversTypes["User"]
   ID: ResolverTypeWrapper<Scalars["ID"]>
   Point: Point
   Int: ResolverTypeWrapper<Scalars["Int"]>
   Query: ResolverTypeWrapper<{}>
-  Tile: ResolverTypeWrapper<Tile>
   Boolean: ResolverTypeWrapper<Scalars["Boolean"]>
   String: ResolverTypeWrapper<Scalars["String"]>
+  Tile: ResolverTypeWrapper<Tile>
+  User: ResolverTypeWrapper<User>
 }
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  Node: ResolversParentTypes["Tile"]
+  Node: ResolversParentTypes["Tile"] | ResolversParentTypes["User"]
   ID: Scalars["ID"]
   Point: Point
   Int: Scalars["Int"]
   Query: {}
-  Tile: Tile
   Boolean: Scalars["Boolean"]
   String: Scalars["String"]
+  Tile: Tile
+  User: User
 }
 
 export type NodeResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes["Node"] = ResolversParentTypes["Node"]
 > = {
-  __resolveType: TypeResolveFn<"Tile", ParentType, ContextType>
+  __resolveType: TypeResolveFn<"Tile" | "User", ParentType, ContextType>
   id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
 }
 
@@ -186,6 +188,13 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetTileByIdArgs, never>
   >
+  verifyToken?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>
+  getUserByUsername?: Resolver<
+    Maybe<ResolversTypes["User"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetUserByUsernameArgs, never>
+  >
 }
 
 export type TileResolvers<
@@ -199,10 +208,27 @@ export type TileResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
+export type UserResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes["User"] = ResolversParentTypes["User"]
+> = {
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
+  email?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>
+  time_created?: Resolver<
+    Maybe<ResolversTypes["String"]>,
+    ParentType,
+    ContextType
+  >
+  username?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>
+  uuid?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
 export type Resolvers<ContextType = Context> = {
   Node?: NodeResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
   Tile?: TileResolvers<ContextType>
+  User?: UserResolvers<ContextType>
 }
 
 /**
@@ -235,6 +261,8 @@ export type Query = {
   getTilesWithinRectangle?: Maybe<Array<Maybe<Tile>>>
   getTilesAroundTile?: Maybe<Array<Maybe<Tile>>>
   getTileByID?: Maybe<Tile>
+  verifyToken: Scalars["Boolean"]
+  getUserByUsername?: Maybe<User>
 }
 
 export type QueryGetTilesWithinRectangleArgs = {
@@ -251,10 +279,23 @@ export type QueryGetTileByIdArgs = {
   tileId?: Maybe<Scalars["Int"]>
 }
 
+export type QueryGetUserByUsernameArgs = {
+  username?: Maybe<Scalars["String"]>
+}
+
 export type Tile = Node & {
   __typename?: "Tile"
   id: Scalars["ID"]
   tile_id?: Maybe<Scalars["Int"]>
   x?: Maybe<Scalars["Int"]>
   y?: Maybe<Scalars["Int"]>
+}
+
+export type User = Node & {
+  __typename?: "User"
+  id: Scalars["ID"]
+  email?: Maybe<Scalars["String"]>
+  time_created?: Maybe<Scalars["String"]>
+  username?: Maybe<Scalars["String"]>
+  uuid?: Maybe<Scalars["Int"]>
 }
