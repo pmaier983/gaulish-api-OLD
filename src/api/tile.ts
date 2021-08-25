@@ -5,6 +5,8 @@ import { addGlobalID } from "@/utils"
 
 // TODO use edge's to link User & their owned boats
 // https://www.apollographql.com/blog/explaining-graphql-connections-c48b7c3d6976/
+// TODO: setup custom directives for auth?
+// https://www.apollographql.com/docs/apollo-server/security/authentication/#with-custom-directives
 export const typeDefs = gql`
   input Point {
     x: Int
@@ -17,6 +19,7 @@ export const typeDefs = gql`
     getTilesAroundTile(point: Point, radius: Int): [Tile]
     getTileByID(tileId: Int): Tile
   }
+
   type Tile implements Node {
     id: ID!
     tile_id: Int

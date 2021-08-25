@@ -10,8 +10,8 @@
     "start": "dotenv -- node ./dist/server.js",
     "doc:build": "dotenv -- cross-var docker build --build-arg DOCKER_WORKDIR=%DOCKER_WORKDIR% -t gaulish-api .",
     "doc:run": "docker run --rm --name gaulish-api -p 3001:3001 -v $INIT_CWD:/usr/src gaulish-api",
-    "dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
-    "dev:local": "dotenv -- tsnd --inspect=9230 -r tsconfig-paths/register --poll --files --respawn src/server.ts",
+    "dev:docker": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
+    "dev": "dotenv -- tsnd --inspect=9230 -r tsconfig-paths/register --poll --files --respawn src/server.ts",
     "lint": "eslint . --fix",
     "generate-types": "graphql-codegen --config codegen.yml && npm run lint"
   },
