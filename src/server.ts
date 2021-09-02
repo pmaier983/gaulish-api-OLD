@@ -1,7 +1,9 @@
 import express from "express"
+import ws from "ws"
 import passport from "passport"
 import compression from "compression"
 import { graphqlHTTP } from "express-graphql"
+import { useServer } from "graphql-ws/lib/use/ws"
 import jwt from "jsonwebtoken"
 import cors from "cors"
 
@@ -76,7 +78,15 @@ app.use(
   }))
 )
 
-// Start the server:
-app.listen(8080, () =>
+// Start the server
+const server = app.listen(8080, () => {
+  // create and use the websocket server
+  const wsServer = new ws.Server({
+    server,
+    path: "/graphql",
+  })
+
+  useServer({ schema }, wsServer)
+
   console.log("Server started on port http://localhost:8080/graphql")
-)
+})
