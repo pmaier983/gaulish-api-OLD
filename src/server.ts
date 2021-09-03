@@ -86,7 +86,17 @@ const server = app.listen(8080, () => {
     path: "/graphql",
   })
 
-  useServer({ schema }, wsServer)
+  useServer(
+    {
+      schema,
+      context: {
+        db,
+        dataLoaders,
+        // TODO: pass the user in each query
+      },
+    },
+    wsServer
+  )
 
   console.log("Server started on port http://localhost:8080/graphql")
 })
