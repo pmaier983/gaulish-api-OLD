@@ -1,5 +1,5 @@
-import { gql } from "@apollo/client/core"
-import { makeExecutableSchema } from "graphql-tools"
+import { makeExecutableSchema } from "@graphql-tools/schema"
+import gql from "graphql-tag"
 
 import { typeDefs, resolvers } from "./api"
 
@@ -7,6 +7,7 @@ const globalTypeDefs = gql`
   interface Node {
     id: ID!
   }
+  type Subscription
   type Query
 `
 
