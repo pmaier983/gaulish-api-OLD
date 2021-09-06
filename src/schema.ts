@@ -7,8 +7,9 @@ const globalTypeDefs = gql`
   interface Node {
     id: ID!
   }
-  type Subscription
   type Query
+  type Mutation
+  type Subscription
 `
 
 // TODO: setup global resolvers
