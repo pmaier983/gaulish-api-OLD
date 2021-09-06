@@ -4,6 +4,7 @@ import passport from "passport"
 import compression from "compression"
 import { graphqlHTTP } from "express-graphql"
 import { useServer } from "graphql-ws/lib/use/ws"
+import { execute, subscribe } from "graphql"
 import jwt from "jsonwebtoken"
 import cors from "cors"
 
@@ -66,7 +67,7 @@ app.use(
         ? jwt.verify(req.headers.authorization?.slice(7), JWT_SECRET)
         : null,
     },
-    graphiql: isDevEnv ? true : false,
+    graphiql: isDevEnv ? { headerEditorEnabled: true } : false,
     customFormatErrorFn: isDevEnv
       ? (error) => ({
           message: error.message,
@@ -94,7 +95,25 @@ const server = app.listen(8080, () => {
         dataLoaders,
         // TODO: pass the user in each query
       },
+      execute,
+      subscribe,
+      onConnect: (ctx) => {
+        console.log("Connect")
+      },
+      onSubscribe: (ctx, msg) => {
+        console.log("Subscribe")
+      },
+      onNext: (ctx, msg, args, result) => {
+        console.debug("Next")
+      },
+      onError: (ctx, msg, errors) => {
+        console.error("Error")
+      },
+      onComplete: (ctx, msg) => {
+        console.log("Complete")
+      },
     },
+
     wsServer
   )
 
