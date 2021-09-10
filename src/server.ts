@@ -28,7 +28,6 @@ const app = express()
 
 app.use(
   cors({
-    // TODO: include dash (3000/ vs. 3000) or no...
     origin: isDevEnv ? FRONTEND_DEV_URL : FRONTEND_URL,
     methods: "GET,PUT,POST,PATCH",
   })
@@ -87,6 +86,7 @@ const server = app.listen(8080, () => {
     path: "/graphql",
   })
 
+  // create auth as seen here: https://github.com/enisdenjo/graphql-ws#ws-auth-handling
   useServer(
     {
       schema,
@@ -113,7 +113,6 @@ const server = app.listen(8080, () => {
         console.log("Complete")
       },
     },
-
     wsServer
   )
 
