@@ -20,9 +20,8 @@ export const typeDefs = gql`
 export const resolvers = {
   Query: {
     getUserByUsername: async (obj, { username }, context) => {
-      const user: User = await context.dataLoaders.userByUsernameDataLoader.load(
-        username
-      )
+      const user: User =
+        await context.dataLoaders.userByUsernameDataLoader.load(username)
       return addGlobalID<User>("user", "uuid", user)
     },
   },

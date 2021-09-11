@@ -1,6 +1,6 @@
 import gql from "graphql-tag"
 
-// import { Resolvers, Tile } from "@/graphql-types"
+import { Resolvers } from "@/graphql-types"
 import { pubsub } from "@/pubSub"
 
 enum PUBS_SUB_CHANNELS {
@@ -24,8 +24,7 @@ export const typeDefs = gql`
   }
 `
 
-export const resolvers = {
-  Query: {},
+export const resolvers: Resolvers = {
   // TODO: how to not Select * (Instead Use fieldNodes.selectionSet?)
   Subscription: {
     globalChat: {
