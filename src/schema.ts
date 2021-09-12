@@ -1,5 +1,5 @@
-import { gql } from "@apollo/client/core"
-import { makeExecutableSchema } from "graphql-tools"
+import { makeExecutableSchema } from "@graphql-tools/schema"
+import gql from "graphql-tag"
 
 import { typeDefs, resolvers } from "./api"
 
@@ -8,6 +8,8 @@ const globalTypeDefs = gql`
     id: ID!
   }
   type Query
+  type Mutation
+  type Subscription
 `
 
 // TODO: setup global resolvers

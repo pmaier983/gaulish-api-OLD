@@ -2,18 +2,23 @@ import { GraphQLResolveInfo } from "graphql"
 import { Context } from "../context"
 export type RequireFields<T, K extends keyof T> = {
   [X in Exclude<keyof T, K>]?: T[X]
-} &
-  { [P in K]-?: NonNullable<T[P]> }
+} & { [P in K]-?: NonNullable<T[P]> }
 export type Maybe<T> = T | null
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K]
 }
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> &
-  { [SubKey in K]?: Maybe<T[SubKey]> }
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> &
-  { [SubKey in K]: Maybe<T[SubKey]> }
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>
+}
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>
+}
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
+
+export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
+  resolve: ResolverFn<TResult, TParent, TContext, TArgs>
+}
 
 export type LegacyStitchingResolver<TResult, TParent, TContext, TArgs> = {
   fragment: string
@@ -29,6 +34,7 @@ export type StitchingResolver<TResult, TParent, TContext, TArgs> =
   | NewStitchingResolver<TResult, TParent, TContext, TArgs>
 export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
   | ResolverFn<TResult, TParent, TContext, TArgs>
+  | ResolverWithResolve<TResult, TParent, TContext, TArgs>
   | StitchingResolver<TResult, TParent, TContext, TArgs>
 
 export type ResolverFn<TResult, TParent, TContext, TArgs> = (
@@ -129,35 +135,71 @@ export type DirectiveResolverFn<
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  Node: ResolversTypes["Tile"] | ResolversTypes["User"]
+  Chat: ResolverTypeWrapper<Chat>
   ID: ResolverTypeWrapper<Scalars["ID"]>
-  Point: Point
   Int: ResolverTypeWrapper<Scalars["Int"]>
-  Query: ResolverTypeWrapper<{}>
-  Boolean: ResolverTypeWrapper<Scalars["Boolean"]>
   String: ResolverTypeWrapper<Scalars["String"]>
+  Mutation: ResolverTypeWrapper<{}>
+  Boolean: ResolverTypeWrapper<Scalars["Boolean"]>
+  Node: ResolversTypes["Chat"] | ResolversTypes["Tile"] | ResolversTypes["User"]
+  Point: Point
+  Query: ResolverTypeWrapper<{}>
+  Subscription: ResolverTypeWrapper<{}>
   Tile: ResolverTypeWrapper<Tile>
   User: ResolverTypeWrapper<User>
 }
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  Node: ResolversParentTypes["Tile"] | ResolversParentTypes["User"]
+  Chat: Chat
   ID: Scalars["ID"]
-  Point: Point
   Int: Scalars["Int"]
-  Query: {}
-  Boolean: Scalars["Boolean"]
   String: Scalars["String"]
+  Mutation: {}
+  Boolean: Scalars["Boolean"]
+  Node:
+    | ResolversParentTypes["Chat"]
+    | ResolversParentTypes["Tile"]
+    | ResolversParentTypes["User"]
+  Point: Point
+  Query: {}
+  Subscription: {}
   Tile: Tile
   User: User
+}
+
+export type ChatResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes["Chat"] = ResolversParentTypes["Chat"]
+> = {
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
+  time?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  text?: Resolver<ResolversTypes["String"], ParentType, ContextType>
+  username?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type MutationResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"]
+> = {
+  chatGlobally?: Resolver<
+    Maybe<ResolversTypes["Boolean"]>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationChatGloballyArgs, "text" | "username">
+  >
 }
 
 export type NodeResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes["Node"] = ResolversParentTypes["Node"]
 > = {
-  __resolveType: TypeResolveFn<"Tile" | "User", ParentType, ContextType>
+  __resolveType: TypeResolveFn<
+    "Chat" | "Tile" | "User",
+    ParentType,
+    ContextType
+  >
   id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
 }
 
@@ -197,6 +239,18 @@ export type QueryResolvers<
   >
 }
 
+export type SubscriptionResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes["Subscription"] = ResolversParentTypes["Subscription"]
+> = {
+  globalChat?: SubscriptionResolver<
+    Maybe<ResolversTypes["Chat"]>,
+    "globalChat",
+    ParentType,
+    ContextType
+  >
+}
+
 export type TileResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes["Tile"] = ResolversParentTypes["Tile"]
@@ -225,8 +279,11 @@ export type UserResolvers<
 }
 
 export type Resolvers<ContextType = Context> = {
+  Chat?: ChatResolvers<ContextType>
+  Mutation?: MutationResolvers<ContextType>
   Node?: NodeResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
+  Subscription?: SubscriptionResolvers<ContextType>
   Tile?: TileResolvers<ContextType>
   User?: UserResolvers<ContextType>
 }
@@ -244,6 +301,24 @@ export type Scalars = {
   Boolean: boolean
   Int: number
   Float: number
+}
+
+export type Chat = Node & {
+  __typename?: "Chat"
+  id: Scalars["ID"]
+  time: Scalars["Int"]
+  text: Scalars["String"]
+  username?: Maybe<Scalars["String"]>
+}
+
+export type Mutation = {
+  __typename?: "Mutation"
+  chatGlobally?: Maybe<Scalars["Boolean"]>
+}
+
+export type MutationChatGloballyArgs = {
+  text: Scalars["String"]
+  username: Scalars["String"]
 }
 
 export type Node = {
@@ -281,6 +356,11 @@ export type QueryGetTileByIdArgs = {
 
 export type QueryGetUserByUsernameArgs = {
   username?: Maybe<Scalars["String"]>
+}
+
+export type Subscription = {
+  __typename?: "Subscription"
+  globalChat?: Maybe<Chat>
 }
 
 export type Tile = Node & {

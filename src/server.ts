@@ -1,7 +1,9 @@
 import express from "express"
+import ws from "ws"
 import passport from "passport"
 import compression from "compression"
 import { graphqlHTTP } from "express-graphql"
+import { useServer } from "graphql-ws/lib/use/ws"
 import jwt from "jsonwebtoken"
 import cors from "cors"
 
@@ -25,7 +27,6 @@ const app = express()
 
 app.use(
   cors({
-    // TODO: include dash (3000/ vs. 3000) or no...
     origin: isDevEnv ? FRONTEND_DEV_URL : FRONTEND_URL,
     methods: "GET,PUT,POST,PATCH",
   })
@@ -64,7 +65,7 @@ app.use(
         ? jwt.verify(req.headers.authorization?.slice(7), JWT_SECRET)
         : null,
     },
-    graphiql: isDevEnv ? true : false,
+    graphiql: isDevEnv ? { headerEditorEnabled: true } : false,
     customFormatErrorFn: isDevEnv
       ? (error) => ({
           message: error.message,
@@ -76,7 +77,41 @@ app.use(
   }))
 )
 
-// Start the server:
-app.listen(8080, () =>
+// Start the server
+const server = app.listen(8080, () => {
+  // create and use the websocket server
+  const wsServer = new ws.Server({
+    server,
+    path: "/graphql",
+  })
+
+  // create auth as seen here: https://github.com/enisdenjo/graphql-ws#ws-auth-handling
+  useServer(
+    {
+      schema,
+      context: {
+        db,
+        dataLoaders,
+        // TODO: pass the user in each query
+      },
+      onConnect: (ctx) => {
+        console.log("Connect")
+      },
+      onSubscribe: (ctx, msg) => {
+        console.log("Subscribe")
+      },
+      onNext: (ctx, msg, args, result) => {
+        console.debug("Next")
+      },
+      onError: (ctx, msg, errors) => {
+        console.error("Error")
+      },
+      onComplete: (ctx, msg) => {
+        console.log("Complete")
+      },
+    },
+    wsServer
+  )
+
   console.log("Server started on port http://localhost:8080/graphql")
-)
+})
