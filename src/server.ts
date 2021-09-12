@@ -4,7 +4,6 @@ import passport from "passport"
 import compression from "compression"
 import { graphqlHTTP } from "express-graphql"
 import { useServer } from "graphql-ws/lib/use/ws"
-import { execute, subscribe } from "graphql"
 import jwt from "jsonwebtoken"
 import cors from "cors"
 
@@ -95,8 +94,6 @@ const server = app.listen(8080, () => {
         dataLoaders,
         // TODO: pass the user in each query
       },
-      execute,
-      subscribe,
       onConnect: (ctx) => {
         console.log("Connect")
       },
