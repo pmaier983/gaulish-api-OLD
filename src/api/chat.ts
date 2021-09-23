@@ -10,7 +10,7 @@ enum PUBS_SUB_CHANNELS {
 export const typeDefs = gql`
   type Chat implements Node {
     id: ID!
-    time: Int!
+    time: String! # Dont use a string? do something more gql?
     text: String!
     username: String
   }
@@ -33,9 +33,13 @@ export const resolvers: Resolvers = {
   },
   Mutation: {
     chatGlobally: async (obj, { text, username }) => {
+      // TODO: dont use time as the unique ID
+      const currentTime = Date.now()
       pubsub.publish(PUBS_SUB_CHANNELS.GLOBAL_CHAT, {
         globalChat: {
-          time: Date.now(),
+          // TODO: probably use globalID instead of this...
+          id: Buffer.from(text+username+currentTime).toString("base64"),
+          time: currentTime.toString(),
           text,
           username,
         },
