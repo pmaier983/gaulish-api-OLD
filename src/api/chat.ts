@@ -16,7 +16,7 @@ export const typeDefs = gql`
   }
 
   extend type Subscription {
-    globalChat: Chat
+    globalChat: Chat!
   }
 
   extend type Mutation {
