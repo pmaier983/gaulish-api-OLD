@@ -19,23 +19,9 @@ export type ResolverTypeWrapper<T> = Promise<T> | T
 export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>
 }
-
-export type LegacyStitchingResolver<TResult, TParent, TContext, TArgs> = {
-  fragment: string
-  resolve: ResolverFn<TResult, TParent, TContext, TArgs>
-}
-
-export type NewStitchingResolver<TResult, TParent, TContext, TArgs> = {
-  selectionSet: string
-  resolve: ResolverFn<TResult, TParent, TContext, TArgs>
-}
-export type StitchingResolver<TResult, TParent, TContext, TArgs> =
-  | LegacyStitchingResolver<TResult, TParent, TContext, TArgs>
-  | NewStitchingResolver<TResult, TParent, TContext, TArgs>
 export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
   | ResolverFn<TResult, TParent, TContext, TArgs>
   | ResolverWithResolve<TResult, TParent, TContext, TArgs>
-  | StitchingResolver<TResult, TParent, TContext, TArgs>
 
 export type ResolverFn<TResult, TParent, TContext, TArgs> = (
   parent: TParent,
@@ -135,15 +121,15 @@ export type DirectiveResolverFn<
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  Boolean: ResolverTypeWrapper<Scalars["Boolean"]>
   Chat: ResolverTypeWrapper<Chat>
   ID: ResolverTypeWrapper<Scalars["ID"]>
   Int: ResolverTypeWrapper<Scalars["Int"]>
-  String: ResolverTypeWrapper<Scalars["String"]>
   Mutation: ResolverTypeWrapper<{}>
-  Boolean: ResolverTypeWrapper<Scalars["Boolean"]>
   Node: ResolversTypes["Chat"] | ResolversTypes["Tile"] | ResolversTypes["User"]
   Point: Point
   Query: ResolverTypeWrapper<{}>
+  String: ResolverTypeWrapper<Scalars["String"]>
   Subscription: ResolverTypeWrapper<{}>
   Tile: ResolverTypeWrapper<Tile>
   User: ResolverTypeWrapper<User>
@@ -151,18 +137,18 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  Boolean: Scalars["Boolean"]
   Chat: Chat
   ID: Scalars["ID"]
   Int: Scalars["Int"]
-  String: Scalars["String"]
   Mutation: {}
-  Boolean: Scalars["Boolean"]
   Node:
     | ResolversParentTypes["Chat"]
     | ResolversParentTypes["Tile"]
     | ResolversParentTypes["User"]
   Point: Point
   Query: {}
+  String: Scalars["String"]
   Subscription: {}
   Tile: Tile
   User: User
@@ -173,8 +159,8 @@ export type ChatResolvers<
   ParentType extends ResolversParentTypes["Chat"] = ResolversParentTypes["Chat"]
 > = {
   id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
-  time?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
   text?: Resolver<ResolversTypes["String"], ParentType, ContextType>
+  time?: Resolver<ResolversTypes["String"], ParentType, ContextType>
   username?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
@@ -212,11 +198,11 @@ export type QueryResolvers<
     ParentType,
     ContextType
   >
-  getTilesWithinRectangle?: Resolver<
-    Maybe<Array<Maybe<ResolversTypes["Tile"]>>>,
+  getTileByID?: Resolver<
+    Maybe<ResolversTypes["Tile"]>,
     ParentType,
     ContextType,
-    RequireFields<QueryGetTilesWithinRectangleArgs, never>
+    RequireFields<QueryGetTileByIdArgs, never>
   >
   getTilesAroundTile?: Resolver<
     Maybe<Array<Maybe<ResolversTypes["Tile"]>>>,
@@ -224,19 +210,19 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetTilesAroundTileArgs, never>
   >
-  getTileByID?: Resolver<
-    Maybe<ResolversTypes["Tile"]>,
+  getTilesWithinRectangle?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes["Tile"]>>>,
     ParentType,
     ContextType,
-    RequireFields<QueryGetTileByIdArgs, never>
+    RequireFields<QueryGetTilesWithinRectangleArgs, never>
   >
-  verifyToken?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>
   getUserByUsername?: Resolver<
     Maybe<ResolversTypes["User"]>,
     ParentType,
     ContextType,
     RequireFields<QueryGetUserByUsernameArgs, never>
   >
+  verifyToken?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>
 }
 
 export type SubscriptionResolvers<
@@ -244,7 +230,7 @@ export type SubscriptionResolvers<
   ParentType extends ResolversParentTypes["Subscription"] = ResolversParentTypes["Subscription"]
 > = {
   globalChat?: SubscriptionResolver<
-    Maybe<ResolversTypes["Chat"]>,
+    ResolversTypes["Chat"],
     "globalChat",
     ParentType,
     ContextType
@@ -266,8 +252,8 @@ export type UserResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes["User"] = ResolversParentTypes["User"]
 > = {
-  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
   email?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
   time_created?: Resolver<
     Maybe<ResolversTypes["String"]>,
     ParentType,
@@ -288,12 +274,6 @@ export type Resolvers<ContextType = Context> = {
   User?: UserResolvers<ContextType>
 }
 
-/**
- * @deprecated
- * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
- */
-export type IResolvers<ContextType = Context> = Resolvers<ContextType>
-
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string
@@ -306,8 +286,8 @@ export type Scalars = {
 export type Chat = Node & {
   __typename?: "Chat"
   id: Scalars["ID"]
-  time: Scalars["Int"]
   text: Scalars["String"]
+  time: Scalars["String"]
   username?: Maybe<Scalars["String"]>
 }
 
@@ -333,16 +313,15 @@ export type Point = {
 export type Query = {
   __typename?: "Query"
   getAllTiles?: Maybe<Array<Maybe<Tile>>>
-  getTilesWithinRectangle?: Maybe<Array<Maybe<Tile>>>
-  getTilesAroundTile?: Maybe<Array<Maybe<Tile>>>
   getTileByID?: Maybe<Tile>
-  verifyToken: Scalars["Boolean"]
+  getTilesAroundTile?: Maybe<Array<Maybe<Tile>>>
+  getTilesWithinRectangle?: Maybe<Array<Maybe<Tile>>>
   getUserByUsername?: Maybe<User>
+  verifyToken: Scalars["Boolean"]
 }
 
-export type QueryGetTilesWithinRectangleArgs = {
-  pointA?: Maybe<Point>
-  pointB?: Maybe<Point>
+export type QueryGetTileByIdArgs = {
+  tileId?: Maybe<Scalars["Int"]>
 }
 
 export type QueryGetTilesAroundTileArgs = {
@@ -350,8 +329,9 @@ export type QueryGetTilesAroundTileArgs = {
   radius?: Maybe<Scalars["Int"]>
 }
 
-export type QueryGetTileByIdArgs = {
-  tileId?: Maybe<Scalars["Int"]>
+export type QueryGetTilesWithinRectangleArgs = {
+  pointA?: Maybe<Point>
+  pointB?: Maybe<Point>
 }
 
 export type QueryGetUserByUsernameArgs = {
@@ -360,7 +340,7 @@ export type QueryGetUserByUsernameArgs = {
 
 export type Subscription = {
   __typename?: "Subscription"
-  globalChat?: Maybe<Chat>
+  globalChat: Chat
 }
 
 export type Tile = Node & {
@@ -373,8 +353,8 @@ export type Tile = Node & {
 
 export type User = Node & {
   __typename?: "User"
-  id: Scalars["ID"]
   email?: Maybe<Scalars["String"]>
+  id: Scalars["ID"]
   time_created?: Maybe<Scalars["String"]>
   username?: Maybe<Scalars["String"]>
   uuid?: Maybe<Scalars["Int"]>
