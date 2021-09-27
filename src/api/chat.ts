@@ -38,7 +38,7 @@ export const resolvers: Resolvers = {
       pubsub.publish(PUBS_SUB_CHANNELS.GLOBAL_CHAT, {
         globalChat: {
           // TODO: probably use globalID instead of this...
-          id: Buffer.from(text+username+currentTime).toString("base64"),
+          id: Buffer.from(text + username + currentTime).toString("base64"),
           time: currentTime.toString(),
           text,
           username,

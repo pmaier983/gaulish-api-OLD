@@ -1,5 +1,7 @@
 import { isArray } from "lodash"
 
+// TODO: make add GlobalID take a unique id instead of inferring one
+
 // a generic Item will have an id added
 // id = Base64Encode(table_title + table_PK_id)
 // we use base64 encoding to make the id smaller & to ensure the id is only used as an id
