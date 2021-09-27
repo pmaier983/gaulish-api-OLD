@@ -31,14 +31,14 @@ export const OAuthHandler = (
 
     const userEmail = profile.email
 
-    const countOfUsersInDb = await t.oneOrNone(
+    const countOfUsersInDbWithEmail = await t.oneOrNone(
       "SELECT count(*) FROM public.user WHERE email = $1",
       userEmail,
       ({ count }) => parseInt(count, 10)
     )
 
     // If there are multiple users with the same email in the db something went wrong
-    if (countOfUsersInDb > 1) {
+    if (countOfUsersInDbWithEmail > 1) {
       return done(
         Error("There seems to be two of you... Something must be wrong")
       )
@@ -50,12 +50,17 @@ export const OAuthHandler = (
     const userRawPassword = process.env.PASSWORD_PEPPER + profile.email
 
     // STEP 2: if there is not user in the DB create one.
-    if (countOfUsersInDb === 0) {
+    if (countOfUsersInDbWithEmail === 0) {
+      const countOFUsersInDb = await t.one(
+        "SELECT count(*) FROM public.user",
+        {},
+        ({ count }) => parseInt(count, 10)
+      )
       const newUserInfo = {
         email: userEmail,
         password: await argon2.hash(userRawPassword),
         time_created: Date.now(),
-        username: "NamelessSailor",
+        username: `NamelessSailor${countOFUsersInDb}`,
         username_update_time: 0, // default date is start of epoch
       }
       // insert them into the database
