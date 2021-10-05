@@ -1,15 +1,19 @@
-### API for Gaulish.io
+# API for Gaulish.io
 
-MVP Plan:
+## Queries
 
-On-Login
+- createUser (password, username, email) => user
+- loginUser/verifyUser? (password, username) => user
 
-- Q createUser (password, username, email) => user
-- Q loginUser/verifyUser? (password, username) => user
-- Q getUserInfo => gold?
+- getMap () => tiles[]
+- getCities () => cities[]
+- getVisibleTileObjects () => tile_object[]
 
-- Q getMapSection (size, x, y) => map matrix
-- Q getEnemies (size, x, y) => enemies[]
-- Q getShips (size, x, y) => ships[]
+## Mutations
 
-- M sendShipOnJourney (ship_id, uuid?, shipPath) => boolean
+- setSail (path, shipId): {success: boolean, message: string}
+
+- buyCargo (type, amount): {success: boolean, message: string}
+- sellCargo (type, amount): {success: boolean, message: string}
+
+- buyShip (type): {success: boolean, message: string}
