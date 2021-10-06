@@ -20,11 +20,19 @@ export const typeDefs = gql`
     getTileByID(tileId: Int): Tile
   }
 
+  enum TileTypes {
+    ocean
+    meadows
+    forest
+    mountains
+  }
+
   type Tile implements Node {
     id: ID!
     tile_id: Int
     x: Int
     y: Int
+    type: TileTypes
   }
 `
 
