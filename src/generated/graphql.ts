@@ -123,10 +123,15 @@ export type DirectiveResolverFn<
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars["Boolean"]>
   Chat: ResolverTypeWrapper<Chat>
+  City: ResolverTypeWrapper<City>
   ID: ResolverTypeWrapper<Scalars["ID"]>
   Int: ResolverTypeWrapper<Scalars["Int"]>
   Mutation: ResolverTypeWrapper<{}>
-  Node: ResolversTypes["Chat"] | ResolversTypes["Tile"] | ResolversTypes["User"]
+  Node:
+    | ResolversTypes["Chat"]
+    | ResolversTypes["City"]
+    | ResolversTypes["Tile"]
+    | ResolversTypes["User"]
   Point: Point
   Query: ResolverTypeWrapper<{}>
   String: ResolverTypeWrapper<Scalars["String"]>
@@ -140,11 +145,13 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   Boolean: Scalars["Boolean"]
   Chat: Chat
+  City: City
   ID: Scalars["ID"]
   Int: Scalars["Int"]
   Mutation: {}
   Node:
     | ResolversParentTypes["Chat"]
+    | ResolversParentTypes["City"]
     | ResolversParentTypes["Tile"]
     | ResolversParentTypes["User"]
   Point: Point
@@ -166,6 +173,17 @@ export type ChatResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
+export type CityResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes["City"] = ResolversParentTypes["City"]
+> = {
+  city_id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
+  name?: Resolver<ResolversTypes["String"], ParentType, ContextType>
+  tile_id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
 export type MutationResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"]
@@ -183,7 +201,7 @@ export type NodeResolvers<
   ParentType extends ResolversParentTypes["Node"] = ResolversParentTypes["Node"]
 > = {
   __resolveType: TypeResolveFn<
-    "Chat" | "Tile" | "User",
+    "Chat" | "City" | "Tile" | "User",
     ParentType,
     ContextType
   >
@@ -194,6 +212,11 @@ export type QueryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
 > = {
+  getAllCities?: Resolver<
+    Array<Maybe<ResolversTypes["City"]>>,
+    ParentType,
+    ContextType
+  >
   getAllTiles?: Resolver<Array<ResolversTypes["Tile"]>, ParentType, ContextType>
   getTileByID?: Resolver<
     ResolversTypes["Tile"],
@@ -264,6 +287,7 @@ export type UserResolvers<
 
 export type Resolvers<ContextType = Context> = {
   Chat?: ChatResolvers<ContextType>
+  City?: CityResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
   Node?: NodeResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
@@ -289,6 +313,14 @@ export type Chat = Node & {
   username?: Maybe<Scalars["String"]>
 }
 
+export type City = Node & {
+  __typename?: "City"
+  city_id: Scalars["Int"]
+  id: Scalars["ID"]
+  name: Scalars["String"]
+  tile_id: Scalars["Int"]
+}
+
 export type Mutation = {
   __typename?: "Mutation"
   chatGlobally?: Maybe<Scalars["Boolean"]>
@@ -310,6 +342,7 @@ export type Point = {
 
 export type Query = {
   __typename?: "Query"
+  getAllCities: Array<Maybe<City>>
   getAllTiles: Array<Tile>
   getTileByID: Tile
   getTilesAroundTile: Array<Tile>
