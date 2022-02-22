@@ -130,10 +130,12 @@ export type ResolversTypes = {
   Node:
     | ResolversTypes["Chat"]
     | ResolversTypes["City"]
+    | ResolversTypes["Ship"]
     | ResolversTypes["Tile"]
     | ResolversTypes["User"]
   Point: Point
   Query: ResolverTypeWrapper<{}>
+  Ship: ResolverTypeWrapper<Ship>
   String: ResolverTypeWrapper<Scalars["String"]>
   Subscription: ResolverTypeWrapper<{}>
   Tile: ResolverTypeWrapper<Tile>
@@ -152,10 +154,12 @@ export type ResolversParentTypes = {
   Node:
     | ResolversParentTypes["Chat"]
     | ResolversParentTypes["City"]
+    | ResolversParentTypes["Ship"]
     | ResolversParentTypes["Tile"]
     | ResolversParentTypes["User"]
   Point: Point
   Query: {}
+  Ship: Ship
   String: Scalars["String"]
   Subscription: {}
   Tile: Tile
@@ -180,6 +184,7 @@ export type CityResolvers<
   city_id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
   id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
   name?: Resolver<ResolversTypes["String"], ParentType, ContextType>
+  tile?: Resolver<ResolversTypes["Tile"], ParentType, ContextType>
   tile_id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
@@ -201,7 +206,7 @@ export type NodeResolvers<
   ParentType extends ResolversParentTypes["Node"] = ResolversParentTypes["Node"]
 > = {
   __resolveType: TypeResolveFn<
-    "Chat" | "City" | "Tile" | "User",
+    "Chat" | "City" | "Ship" | "Tile" | "User",
     ParentType,
     ContextType
   >
@@ -218,6 +223,12 @@ export type QueryResolvers<
     ContextType
   >
   getAllTiles?: Resolver<Array<ResolversTypes["Tile"]>, ParentType, ContextType>
+  getShipsByUUID?: Resolver<
+    Array<Maybe<ResolversTypes["Ship"]>>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetShipsByUuidArgs, never>
+  >
   getTileByID?: Resolver<
     ResolversTypes["Tile"],
     ParentType,
@@ -243,6 +254,19 @@ export type QueryResolvers<
     RequireFields<QueryGetUserByUsernameArgs, never>
   >
   verifyToken?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>
+}
+
+export type ShipResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes["Ship"] = ResolversParentTypes["Ship"]
+> = {
+  city_id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
+  name?: Resolver<ResolversTypes["String"], ParentType, ContextType>
+  ship_id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  ship_type_id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  uuid?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
 export type SubscriptionResolvers<
@@ -291,6 +315,7 @@ export type Resolvers<ContextType = Context> = {
   Mutation?: MutationResolvers<ContextType>
   Node?: NodeResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
+  Ship?: ShipResolvers<ContextType>
   Subscription?: SubscriptionResolvers<ContextType>
   Tile?: TileResolvers<ContextType>
   User?: UserResolvers<ContextType>
@@ -318,6 +343,7 @@ export type City = Node & {
   city_id: Scalars["Int"]
   id: Scalars["ID"]
   name: Scalars["String"]
+  tile: Tile
   tile_id: Scalars["Int"]
 }
 
@@ -344,11 +370,16 @@ export type Query = {
   __typename?: "Query"
   getAllCities: Array<Maybe<City>>
   getAllTiles: Array<Tile>
+  getShipsByUUID: Array<Maybe<Ship>>
   getTileByID: Tile
   getTilesAroundTile: Array<Tile>
   getTilesWithinRectangle: Array<Tile>
   getUserByUsername: User
   verifyToken: Scalars["Boolean"]
+}
+
+export type QueryGetShipsByUuidArgs = {
+  username?: Maybe<Scalars["Int"]>
 }
 
 export type QueryGetTileByIdArgs = {
@@ -367,6 +398,16 @@ export type QueryGetTilesWithinRectangleArgs = {
 
 export type QueryGetUserByUsernameArgs = {
   username?: Maybe<Scalars["String"]>
+}
+
+export type Ship = Node & {
+  __typename?: "Ship"
+  city_id: Scalars["Int"]
+  id: Scalars["ID"]
+  name: Scalars["String"]
+  ship_id: Scalars["Int"]
+  ship_type_id: Scalars["Int"]
+  uuid: Scalars["Int"]
 }
 
 export type Subscription = {
