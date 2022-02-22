@@ -49,6 +49,9 @@ export const OAuthHandler = (
     // TODO stop using email as password... find a better way to do this.
     const userRawPassword = process.env.PASSWORD_PEPPER + profile.email
 
+    // TODO: dont use a let here... keeps things immutable
+    let isNewUser = false
+
     // STEP 2: if there is not user in the DB create one.
     if (countOfUsersInDbWithEmail === 0) {
       const countOFUsersInDb = await t.one(
@@ -60,14 +63,17 @@ export const OAuthHandler = (
         email: userEmail,
         password: await argon2.hash(userRawPassword),
         time_created: Date.now(),
-        username: `NamelessSailor${countOFUsersInDb}`,
+        username: `NamelessSailor_${countOFUsersInDb}`,
         username_update_time: 0, // default date is start of epoch
       }
+
       // insert them into the database
-      t.none(
+      await t.none(
         "INSERT into public.user (password, time_created, email, username, username_update_time) VALUES (${password}, ${time_created}, ${email}, ${username}, ${username_update_time})",
         newUserInfo
       )
+
+      isNewUser = true
     }
 
     // STEP 3: Fetch your user (possibly newly created) and verify their password
@@ -90,6 +96,19 @@ export const OAuthHandler = (
       return done(null, false, {
         message: "Your username and/or password did not match",
       })
+    }
+
+    if (isNewUser) {
+      // Give the new user a beginner ship in a random city
+      const cityIDs = await t.any("select city_id from public.city")
+
+      const randomCityID =
+        cityIDs[Math.floor(Math.random() * cityIDs.length)].city_id
+
+      await t.none(
+        "insert into public.ship (name, city_id, uuid, ship_type_id) values ('GoingMerry', ${randomCityID}, ${uuid}, 1)",
+        { ...fullUser, randomCityID }
+      )
     }
 
     return done(null, userLessPassword)
