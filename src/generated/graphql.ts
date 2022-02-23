@@ -185,7 +185,6 @@ export type CityResolvers<
   id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
   name?: Resolver<ResolversTypes["String"], ParentType, ContextType>
   tile?: Resolver<ResolversTypes["Tile"], ParentType, ContextType>
-  tile_id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
@@ -260,7 +259,7 @@ export type ShipResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes["Ship"] = ResolversParentTypes["Ship"]
 > = {
-  city_id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  city?: Resolver<ResolversTypes["City"], ParentType, ContextType>
   id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
   name?: Resolver<ResolversTypes["String"], ParentType, ContextType>
   ship_id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
@@ -344,7 +343,6 @@ export type City = Node & {
   id: Scalars["ID"]
   name: Scalars["String"]
   tile: Tile
-  tile_id: Scalars["Int"]
 }
 
 export type Mutation = {
@@ -379,7 +377,7 @@ export type Query = {
 }
 
 export type QueryGetShipsByUuidArgs = {
-  username?: Maybe<Scalars["Int"]>
+  uuid?: Maybe<Scalars["Int"]>
 }
 
 export type QueryGetTileByIdArgs = {
@@ -402,7 +400,7 @@ export type QueryGetUserByUsernameArgs = {
 
 export type Ship = Node & {
   __typename?: "Ship"
-  city_id: Scalars["Int"]
+  city: City
   id: Scalars["ID"]
   name: Scalars["String"]
   ship_id: Scalars["Int"]
