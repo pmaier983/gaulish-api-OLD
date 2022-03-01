@@ -122,13 +122,10 @@ export type DirectiveResolverFn<
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars["Boolean"]>
-  Chat: ResolverTypeWrapper<Chat>
   City: ResolverTypeWrapper<City>
   ID: ResolverTypeWrapper<Scalars["ID"]>
   Int: ResolverTypeWrapper<Scalars["Int"]>
-  Mutation: ResolverTypeWrapper<{}>
   Node:
-    | ResolversTypes["Chat"]
     | ResolversTypes["City"]
     | ResolversTypes["Ship"]
     | ResolversTypes["Tile"]
@@ -137,7 +134,6 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>
   Ship: ResolverTypeWrapper<Ship>
   String: ResolverTypeWrapper<Scalars["String"]>
-  Subscription: ResolverTypeWrapper<{}>
   Tile: ResolverTypeWrapper<Tile>
   TileTypes: TileTypes
   User: ResolverTypeWrapper<User>
@@ -146,13 +142,10 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars["Boolean"]
-  Chat: Chat
   City: City
   ID: Scalars["ID"]
   Int: Scalars["Int"]
-  Mutation: {}
   Node:
-    | ResolversParentTypes["Chat"]
     | ResolversParentTypes["City"]
     | ResolversParentTypes["Ship"]
     | ResolversParentTypes["Tile"]
@@ -161,20 +154,8 @@ export type ResolversParentTypes = {
   Query: {}
   Ship: Ship
   String: Scalars["String"]
-  Subscription: {}
   Tile: Tile
   User: User
-}
-
-export type ChatResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes["Chat"] = ResolversParentTypes["Chat"]
-> = {
-  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
-  text?: Resolver<ResolversTypes["String"], ParentType, ContextType>
-  time?: Resolver<ResolversTypes["String"], ParentType, ContextType>
-  username?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
 export type CityResolvers<
@@ -188,24 +169,12 @@ export type CityResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
-export type MutationResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"]
-> = {
-  chatGlobally?: Resolver<
-    Maybe<ResolversTypes["Boolean"]>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationChatGloballyArgs, "text" | "username">
-  >
-}
-
 export type NodeResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes["Node"] = ResolversParentTypes["Node"]
 > = {
   __resolveType: TypeResolveFn<
-    "Chat" | "City" | "Ship" | "Tile" | "User",
+    "City" | "Ship" | "Tile" | "User",
     ParentType,
     ContextType
   >
@@ -268,18 +237,6 @@ export type ShipResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
-export type SubscriptionResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes["Subscription"] = ResolversParentTypes["Subscription"]
-> = {
-  globalChat?: SubscriptionResolver<
-    ResolversTypes["Chat"],
-    "globalChat",
-    ParentType,
-    ContextType
-  >
-}
-
 export type TileResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes["Tile"] = ResolversParentTypes["Tile"]
@@ -309,13 +266,10 @@ export type UserResolvers<
 }
 
 export type Resolvers<ContextType = Context> = {
-  Chat?: ChatResolvers<ContextType>
   City?: CityResolvers<ContextType>
-  Mutation?: MutationResolvers<ContextType>
   Node?: NodeResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
   Ship?: ShipResolvers<ContextType>
-  Subscription?: SubscriptionResolvers<ContextType>
   Tile?: TileResolvers<ContextType>
   User?: UserResolvers<ContextType>
 }
@@ -329,30 +283,12 @@ export type Scalars = {
   Float: number
 }
 
-export type Chat = Node & {
-  __typename?: "Chat"
-  id: Scalars["ID"]
-  text: Scalars["String"]
-  time: Scalars["String"]
-  username?: Maybe<Scalars["String"]>
-}
-
 export type City = Node & {
   __typename?: "City"
   city_id: Scalars["Int"]
   id: Scalars["ID"]
   name: Scalars["String"]
   tile: Tile
-}
-
-export type Mutation = {
-  __typename?: "Mutation"
-  chatGlobally?: Maybe<Scalars["Boolean"]>
-}
-
-export type MutationChatGloballyArgs = {
-  text: Scalars["String"]
-  username: Scalars["String"]
 }
 
 export type Node = {
@@ -406,11 +342,6 @@ export type Ship = Node & {
   ship_id: Scalars["Int"]
   ship_type_id: Scalars["Int"]
   uuid: Scalars["Int"]
-}
-
-export type Subscription = {
-  __typename?: "Subscription"
-  globalChat: Chat
 }
 
 export type Tile = Node & {
