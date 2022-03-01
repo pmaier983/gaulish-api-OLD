@@ -4,6 +4,8 @@ import compression from "compression"
 import { graphqlHTTP } from "express-graphql"
 import jwt from "jsonwebtoken"
 import cors from "cors"
+import { Server } from "socket.io"
+import http from "http"
 
 import db from "@/database"
 
@@ -12,7 +14,6 @@ import { schema } from "./schema"
 import { googleOAuthStrategy, authCallback } from "./auth"
 
 // TODO: setup TypeDocs
-// TODO: can socket.io work with graphql-ws?
 // TODO: setup some database mocking (msw, json-server, etc?)
 // TODO: setup some bundle size reporter?
 
@@ -75,7 +76,28 @@ app.use(
   }))
 )
 
+const server = http.createServer(app)
+
+const io = new Server(server, {
+  cors: {
+    origin: isDevEnv ? FRONTEND_DEV_URL : FRONTEND_URL,
+    methods: "GET,PUT,POST,PATCH",
+  },
+})
+
+io.on("connection", (socket) => {
+  console.log(`connect: ${socket.id}`)
+
+  socket.on("hello!", () => {
+    console.log(`hello from ${socket.id}`)
+  })
+
+  socket.on("disconnect", () => {
+    console.log(`disconnect: ${socket.id}`)
+  })
+})
+
 // Start the server
-app.listen(8080, () => {
+server.listen(8080, () => {
   console.log("Server started on port http://localhost:8080/graphql")
 })
