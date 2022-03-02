@@ -5,7 +5,6 @@ import { graphqlHTTP } from "express-graphql"
 import jwt from "jsonwebtoken"
 import cors from "cors"
 import { Server } from "socket.io"
-import http from "http"
 
 import db from "@/database"
 
@@ -21,15 +20,15 @@ const { NODE_ENV, FRONTEND_DEV_URL, FRONTEND_URL, JWT_SECRET } = process.env
 
 const isDevEnv = NODE_ENV === "development"
 
+const CORS = {
+  origin: isDevEnv ? FRONTEND_DEV_URL : FRONTEND_URL,
+  methods: "GET,PUT,POST,PATCH",
+}
+
 // Create a server:
 const app = express()
 
-app.use(
-  cors({
-    origin: isDevEnv ? FRONTEND_DEV_URL : FRONTEND_URL,
-    methods: "GET,PUT,POST,PATCH",
-  })
-)
+app.use(cors(CORS))
 
 app.use(passport.initialize())
 
@@ -76,17 +75,28 @@ app.use(
   }))
 )
 
-const server = http.createServer(app)
-
-const io = new Server(server, {
-  cors: {
-    origin: isDevEnv ? FRONTEND_DEV_URL : FRONTEND_URL,
-    methods: "GET,PUT,POST,PATCH",
-  },
+// Start the server
+const server = app.listen(8080, () => {
+  console.log("Server started on port http://localhost:8080/graphql")
 })
 
+const io = new Server(server, {
+  cors: CORS,
+})
+
+io.use(async (socket, next) => {
+  // TODO: auth socket.io requests
+  // Just because I have been defeated today, does not mean i will be defeated tomorrow.
+  if (socket.request) {
+    next()
+  } else {
+    next(new Error("unauthorized"))
+  }
+})
+
+// TODO: integrate ws into gql as @live queries
 io.on("connection", (socket) => {
-  console.log(`connect: ${socket.id}`)
+  // console.log("we in bb", socket.id)
 
   socket.on("hello!", () => {
     console.log(`hello from ${socket.id}`)
@@ -95,9 +105,4 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log(`disconnect: ${socket.id}`)
   })
-})
-
-// Start the server
-server.listen(8080, () => {
-  console.log("Server started on port http://localhost:8080/graphql")
 })
