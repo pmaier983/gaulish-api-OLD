@@ -80,6 +80,7 @@ const server = app.listen(8080, () => {
   console.log("Server started on port http://localhost:8080/graphql")
 })
 
+// TODO: look into https://github.com/uNetworking/uWebSockets.js
 const io = new Server(server, {
   cors: CORS,
 })
