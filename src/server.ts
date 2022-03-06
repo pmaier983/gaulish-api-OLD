@@ -4,26 +4,21 @@ import compression from "compression"
 import { graphqlHTTP } from "express-graphql"
 import jwt from "jsonwebtoken"
 import cors from "cors"
-import { Server } from "socket.io"
 
 import db from "@/database"
 
+import { socketServer } from "./socketServer"
 import { dataLoaders } from "./dataLoaders"
 import { schema } from "./schema"
 import { googleOAuthStrategy, authCallback } from "./auth"
+import { CORS, isDevEnv } from "./utils/constants"
 
 // TODO: setup TypeDocs
 // TODO: setup some database mocking (msw, json-server, etc?)
 // TODO: setup some bundle size reporter?
+// TODO: shift to ESM (https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c#how-can-i-move-my-commonjs-project-to-esm)
 
-const { NODE_ENV, FRONTEND_DEV_URL, FRONTEND_URL, JWT_SECRET } = process.env
-
-const isDevEnv = NODE_ENV === "development"
-
-const CORS = {
-  origin: isDevEnv ? FRONTEND_DEV_URL : FRONTEND_URL,
-  methods: "GET,PUT,POST,PATCH",
-}
+const { JWT_SECRET } = process.env
 
 // Create a server:
 const app = express()
@@ -80,30 +75,4 @@ const server = app.listen(8080, () => {
   console.log("Server started on port http://localhost:8080/graphql")
 })
 
-// TODO: look into https://github.com/uNetworking/uWebSockets.js
-const io = new Server(server, {
-  cors: CORS,
-})
-
-io.use(async (socket, next) => {
-  // TODO: auth socket.io requests
-  // Just because I have been defeated today, does not mean i will be defeated tomorrow.
-  if (socket.request) {
-    next()
-  } else {
-    next(new Error("unauthorized"))
-  }
-})
-
-// TODO: integrate ws into gql as @live queries
-io.on("connection", (socket) => {
-  // console.log("we in bb", socket.id)
-
-  socket.on("hello!", () => {
-    console.log(`hello from ${socket.id}`)
-  })
-
-  socket.on("disconnect", () => {
-    console.log(`disconnect: ${socket.id}`)
-  })
-})
+socketServer(server)

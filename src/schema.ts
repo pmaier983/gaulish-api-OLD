@@ -8,7 +8,6 @@ const globalTypeDefs = gql`
     id: ID!
   }
   type Query
-  type Mutation
 `
 
 // TODO: setup global resolvers

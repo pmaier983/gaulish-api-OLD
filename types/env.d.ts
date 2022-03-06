@@ -19,6 +19,7 @@ declare global {
       GRAPHQL_PORT: string
       FRONTEND_DEV_URL: string
       FRONTEND_URL: string
+      SERVER_URL: string
     }
   }
 }
