@@ -1,74 +1,50 @@
-import { gql } from "graphql-tag"
-import type { Server } from "http"
-import { Server as SocketServer } from "socket.io"
-import jwt from "jsonwebtoken"
-import fetch from "node-fetch"
-
-import db from "@/database"
-
-import { CORS } from "./utils/constants"
 import { User } from "./generated/graphql"
+import type { Server } from "http"
+import { Server as SocketServerCreator } from "socket.io"
 
-const { SERVER_URL } = process.env
+import { CORS } from "@/utils/constants"
+import { authSocket } from "@/sockets/authSocket"
+
+interface ClientToServerEvents {
+  globalChat: (message: string) => void
+}
+
+interface ServerToClientEvents {
+  globalChat: (message: string) => void
+}
+
+/* eslint-disable @typescript-eslint/no-empty-interface */
+interface InterServerEvents {}
+
+interface SocketData {
+  user: User
+}
+/* eslint-enable @typescript-eslint/no-empty-interface */
+
+export type SocketServer = SocketServerCreator<
+  ClientToServerEvents,
+  ServerToClientEvents,
+  InterServerEvents,
+  SocketData
+>
 
 export const socketServer = (server: Server) => {
   // TODO: look into https://github.com/uNetworking/uWebSockets.js
-  const io = new SocketServer(server, {
+  const io: SocketServer = new SocketServerCreator(server, {
     cors: CORS,
   })
 
-  io.use(async (socket, next) => {
-    const bearerToken = socket.handshake.headers.authorization
-    const token = bearerToken.substring(7, bearerToken.length)
-
-    if (!token) {
-      next(new Error("No Bearer Token Present on socket.io request"))
-    }
-
-    try {
-      const verificationResponse = await fetch(`${SERVER_URL}/graphql`, {
-        method: "POST",
-        headers: {
-          authorization: bearerToken,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          query: `
-            query verifyToken {
-              verifyToken
-            }
-          `,
-        }),
-      })
-
-      const response = await verificationResponse.json()
-
-      if (!response.data.verifyToken) {
-        next(new Error("Users Token Was Invalid"))
-      }
-    } catch (e) {
-      next(e)
-    }
-
-    next()
-  })
+  authSocket(io)
 
   // TODO: integrate ws into gql as @live queries
   io.on("connection", async (socket) => {
-    const bearerToken = socket.handshake.headers.authorization
-    const token = bearerToken.substring(7, bearerToken.length)
-    // TODO: properly type this
-    const userEmail = (jwt.decode(token) as User)?.email
+    console.log("connection", socket.id, socket.data.user)
 
-    const user: User = await db.one(
-      "SELECT email, time_created, username, uuid FROM public.user WHERE email = $1",
-      userEmail
-    )
-
-    console.log("connection", socket.id, user)
-
-    socket.on("hello!", () => {
-      console.log(`hello from ${socket.id}`)
+    let val = 1
+    socket.on("globalChat", (stuff) => {
+      console.log(`Chat from ${socket.id}, ${stuff}`)
+      socket.emit("globalChat", `Pong${val}`)
+      val++
     })
 
     socket.on("disconnect", () => {

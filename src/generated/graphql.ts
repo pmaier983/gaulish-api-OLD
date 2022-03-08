@@ -126,7 +126,6 @@ export type ResolversTypes = {
   City: ResolverTypeWrapper<City>
   ID: ResolverTypeWrapper<Scalars["ID"]>
   Int: ResolverTypeWrapper<Scalars["Int"]>
-  Mutation: ResolverTypeWrapper<{}>
   Node:
     | ResolversTypes["Chat"]
     | ResolversTypes["City"]
@@ -149,7 +148,6 @@ export type ResolversParentTypes = {
   City: City
   ID: Scalars["ID"]
   Int: Scalars["Int"]
-  Mutation: {}
   Node:
     | ResolversParentTypes["Chat"]
     | ResolversParentTypes["City"]
@@ -182,18 +180,6 @@ export type CityResolvers<
   name?: Resolver<ResolversTypes["String"], ParentType, ContextType>
   tile?: Resolver<ResolversTypes["Tile"], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
-}
-
-export type MutationResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"]
-> = {
-  logChat?: Resolver<
-    Maybe<ResolversTypes["Boolean"]>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationLogChatArgs, never>
-  >
 }
 
 export type NodeResolvers<
@@ -301,7 +287,6 @@ export type UserResolvers<
 export type Resolvers<ContextType = Context> = {
   Chat?: ChatResolvers<ContextType>
   City?: CityResolvers<ContextType>
-  Mutation?: MutationResolvers<ContextType>
   Node?: NodeResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
   Ship?: ShipResolvers<ContextType>
@@ -330,17 +315,6 @@ export type City = Node & {
   id: Scalars["ID"]
   name: Scalars["String"]
   tile: Tile
-}
-
-export type Mutation = {
-  __typename?: "Mutation"
-  logChat?: Maybe<Scalars["Boolean"]>
-}
-
-export type MutationLogChatArgs = {
-  recipient_uuid?: Maybe<Scalars["Int"]>
-  room_id?: Maybe<Scalars["Int"]>
-  text?: Maybe<Scalars["String"]>
 }
 
 export type Node = {
