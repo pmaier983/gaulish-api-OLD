@@ -1,23 +1,24 @@
-import { User } from "./generated/graphql"
 import type { Server } from "http"
 import { Server as SocketServerCreator } from "socket.io"
 
 import { CORS } from "@/utils/constants"
+import db from "@/database"
 import { authSocket } from "@/sockets/authSocket"
+import { User } from "@/graphql-types"
 
-interface ClientToServerEvents {
-  globalChat: (message: string) => void
+interface ClientAndServerEvents {
+  globalChat: (message: string, timeSent: number) => void
 }
 
-interface ServerToClientEvents {
-  globalChat: (message: string) => void
-}
+type ClientToServerEvents = ClientAndServerEvents
+
+type ServerToClientEvents = ClientAndServerEvents
 
 /* eslint-disable @typescript-eslint/no-empty-interface */
 interface InterServerEvents {}
 
 interface SocketData {
-  user: User
+  user: Omit<User, "id">
 }
 /* eslint-enable @typescript-eslint/no-empty-interface */
 
@@ -40,11 +41,15 @@ export const socketServer = (server: Server) => {
   io.on("connection", async (socket) => {
     console.log("connection", socket.id, socket.data.user)
 
-    let val = 1
-    socket.on("globalChat", (stuff) => {
-      console.log(`Chat from ${socket.id}, ${stuff}`)
-      socket.emit("globalChat", `Pong${val}`)
-      val++
+    const { uuid } = socket.data.user
+
+    socket.on("globalChat", (message, timeSent) => {
+      socket.emit("globalChat", message, timeSent)
+      // TODO: log chats in some blob store... sql isn't super efficient for this
+      db.none(
+        "insert into public.chat (uuid, timestamp, room_id, recipient_uuid, text) values (${uuid}, ${timestamp}, null, null, ${text})",
+        { uuid, timestamp: timeSent, text: message }
+      )
     })
 
     socket.on("disconnect", () => {
