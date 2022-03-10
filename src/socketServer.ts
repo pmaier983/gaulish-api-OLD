@@ -31,7 +31,7 @@ export type SocketServer = SocketServerCreator<
 
 export const socketServer = (server: Server) => {
   // TODO: look into https://github.com/uNetworking/uWebSockets.js
-  const io: SocketServer = new SocketServerCreator(server, {
+  const io = new SocketServerCreator(server, {
     cors: CORS,
   })
 
@@ -44,7 +44,7 @@ export const socketServer = (server: Server) => {
     const { uuid } = socket.data.user
 
     socket.on("globalChat", (message, timeSent) => {
-      socket.emit("globalChat", message, timeSent)
+      io.emit("globalChat", message, timeSent)
       // TODO: log chats in some blob store... sql isn't super efficient for this
       db.none(
         "insert into public.chat (uuid, timestamp, room_id, recipient_uuid, text) values (${uuid}, ${timestamp}, null, null, ${text})",

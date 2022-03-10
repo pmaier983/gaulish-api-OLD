@@ -23,7 +23,7 @@ export const OAuthHandler = (
 ) =>
   db.task(async (t) => {
     // STEP 1 Check that the user is verified. If not reject.
-    if (!profile.email_verified || !profile.verified) {
+    if (!profile.email_verified || !profile.verified || !profile.email) {
       // prevent a unverified user from creating an account to avoid
       // account theft via fake email creation (once I have multiple Auths setup)
       return done(Error("You must verify your Gmail Account to log in"))

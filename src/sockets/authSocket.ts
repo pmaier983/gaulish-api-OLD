@@ -13,8 +13,8 @@ export const authSocket = (io: SocketServer) => {
     const bearerToken = socket.handshake.headers.authorization
     const token = bearerToken.substring(7, bearerToken.length)
 
-    if (!token) {
-      next(new Error("No Bearer Token Present on socket.io request"))
+    if (token === "null" || !token) {
+      return next(new Error("No Bearer Token Present on socket.io request"))
     }
 
     try {
@@ -36,7 +36,7 @@ export const authSocket = (io: SocketServer) => {
       const response = await verificationResponse.json()
 
       if (!response.data.verifyToken) {
-        next(new Error("Users Token Was Invalid"))
+        return next(new Error("Users Token Was Invalid"))
       }
     } catch (e) {
       next(e)
