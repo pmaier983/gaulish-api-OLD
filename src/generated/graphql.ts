@@ -168,6 +168,15 @@ export type ChatResolvers<
 > = {
   chat_id?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>
   id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
+  recipient_uuid?: Resolver<
+    Maybe<ResolversTypes["Int"]>,
+    ParentType,
+    ContextType
+  >
+  room_id?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>
+  text?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>
+  timestamp?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>
+  uuid?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
@@ -208,7 +217,7 @@ export type QueryResolvers<
     Array<Maybe<ResolversTypes["Chat"]>>,
     ParentType,
     ContextType,
-    RequireFields<QueryGetChatHistoryArgs, never>
+    RequireFields<QueryGetChatHistoryArgs, "timestamp">
   >
   getShipsByUUID?: Resolver<
     Array<Maybe<ResolversTypes["Ship"]>>,
@@ -307,6 +316,11 @@ export type Chat = Node & {
   __typename?: "Chat"
   chat_id?: Maybe<Scalars["Int"]>
   id: Scalars["ID"]
+  recipient_uuid?: Maybe<Scalars["Int"]>
+  room_id?: Maybe<Scalars["Int"]>
+  text?: Maybe<Scalars["String"]>
+  timestamp?: Maybe<Scalars["Int"]>
+  uuid?: Maybe<Scalars["Int"]>
 }
 
 export type City = Node & {
@@ -341,7 +355,7 @@ export type Query = {
 
 export type QueryGetChatHistoryArgs = {
   room_id?: Maybe<Scalars["Int"]>
-  timestamp?: Maybe<Scalars["Int"]>
+  timestamp: Scalars["Int"]
 }
 
 export type QueryGetShipsByUuidArgs = {
