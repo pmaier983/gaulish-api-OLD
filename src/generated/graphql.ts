@@ -123,15 +123,21 @@ export type DirectiveResolverFn<
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars["Boolean"]>
   Chat: ResolverTypeWrapper<Chat>
+  City: ResolverTypeWrapper<City>
   ID: ResolverTypeWrapper<Scalars["ID"]>
   Int: ResolverTypeWrapper<Scalars["Int"]>
-  Mutation: ResolverTypeWrapper<{}>
-  Node: ResolversTypes["Chat"] | ResolversTypes["Tile"] | ResolversTypes["User"]
+  Node:
+    | ResolversTypes["Chat"]
+    | ResolversTypes["City"]
+    | ResolversTypes["Ship"]
+    | ResolversTypes["Tile"]
+    | ResolversTypes["User"]
   Point: Point
   Query: ResolverTypeWrapper<{}>
+  Ship: ResolverTypeWrapper<Ship>
   String: ResolverTypeWrapper<Scalars["String"]>
-  Subscription: ResolverTypeWrapper<{}>
   Tile: ResolverTypeWrapper<Tile>
+  TileTypes: TileTypes
   User: ResolverTypeWrapper<User>
 }
 
@@ -139,17 +145,19 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   Boolean: Scalars["Boolean"]
   Chat: Chat
+  City: City
   ID: Scalars["ID"]
   Int: Scalars["Int"]
-  Mutation: {}
   Node:
     | ResolversParentTypes["Chat"]
+    | ResolversParentTypes["City"]
+    | ResolversParentTypes["Ship"]
     | ResolversParentTypes["Tile"]
     | ResolversParentTypes["User"]
   Point: Point
   Query: {}
+  Ship: Ship
   String: Scalars["String"]
-  Subscription: {}
   Tile: Tile
   User: User
 }
@@ -158,23 +166,29 @@ export type ChatResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes["Chat"] = ResolversParentTypes["Chat"]
 > = {
+  chat_id?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>
   id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
-  text?: Resolver<ResolversTypes["String"], ParentType, ContextType>
-  time?: Resolver<ResolversTypes["String"], ParentType, ContextType>
-  username?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>
+  recipient_uuid?: Resolver<
+    Maybe<ResolversTypes["Int"]>,
+    ParentType,
+    ContextType
+  >
+  room_id?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>
+  text?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>
+  timestamp?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>
+  uuid?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
-export type MutationResolvers<
+export type CityResolvers<
   ContextType = Context,
-  ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"]
+  ParentType extends ResolversParentTypes["City"] = ResolversParentTypes["City"]
 > = {
-  chatGlobally?: Resolver<
-    Maybe<ResolversTypes["Boolean"]>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationChatGloballyArgs, "text" | "username">
-  >
+  city_id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
+  name?: Resolver<ResolversTypes["String"], ParentType, ContextType>
+  tile?: Resolver<ResolversTypes["Tile"], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
 export type NodeResolvers<
@@ -182,7 +196,7 @@ export type NodeResolvers<
   ParentType extends ResolversParentTypes["Node"] = ResolversParentTypes["Node"]
 > = {
   __resolveType: TypeResolveFn<
-    "Chat" | "Tile" | "User",
+    "Chat" | "City" | "Ship" | "Tile" | "User",
     ParentType,
     ContextType
   >
@@ -193,31 +207,44 @@ export type QueryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
 > = {
-  getAllTiles?: Resolver<
-    Maybe<Array<Maybe<ResolversTypes["Tile"]>>>,
+  getAllCities?: Resolver<
+    Array<Maybe<ResolversTypes["City"]>>,
     ParentType,
     ContextType
   >
+  getAllTiles?: Resolver<Array<ResolversTypes["Tile"]>, ParentType, ContextType>
+  getChatHistory?: Resolver<
+    Array<Maybe<ResolversTypes["Chat"]>>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetChatHistoryArgs, "timestamp">
+  >
+  getShipsByUUID?: Resolver<
+    Array<Maybe<ResolversTypes["Ship"]>>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetShipsByUuidArgs, never>
+  >
   getTileByID?: Resolver<
-    Maybe<ResolversTypes["Tile"]>,
+    ResolversTypes["Tile"],
     ParentType,
     ContextType,
     RequireFields<QueryGetTileByIdArgs, never>
   >
   getTilesAroundTile?: Resolver<
-    Maybe<Array<Maybe<ResolversTypes["Tile"]>>>,
+    Array<ResolversTypes["Tile"]>,
     ParentType,
     ContextType,
     RequireFields<QueryGetTilesAroundTileArgs, never>
   >
   getTilesWithinRectangle?: Resolver<
-    Maybe<Array<Maybe<ResolversTypes["Tile"]>>>,
+    Array<ResolversTypes["Tile"]>,
     ParentType,
     ContextType,
     RequireFields<QueryGetTilesWithinRectangleArgs, never>
   >
   getUserByUsername?: Resolver<
-    Maybe<ResolversTypes["User"]>,
+    ResolversTypes["User"],
     ParentType,
     ContextType,
     RequireFields<QueryGetUserByUsernameArgs, never>
@@ -225,16 +252,17 @@ export type QueryResolvers<
   verifyToken?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>
 }
 
-export type SubscriptionResolvers<
+export type ShipResolvers<
   ContextType = Context,
-  ParentType extends ResolversParentTypes["Subscription"] = ResolversParentTypes["Subscription"]
+  ParentType extends ResolversParentTypes["Ship"] = ResolversParentTypes["Ship"]
 > = {
-  globalChat?: SubscriptionResolver<
-    ResolversTypes["Chat"],
-    "globalChat",
-    ParentType,
-    ContextType
-  >
+  city?: Resolver<ResolversTypes["City"], ParentType, ContextType>
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
+  name?: Resolver<ResolversTypes["String"], ParentType, ContextType>
+  ship_id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  ship_type_id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  uuid?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
 export type TileResolvers<
@@ -242,9 +270,10 @@ export type TileResolvers<
   ParentType extends ResolversParentTypes["Tile"] = ResolversParentTypes["Tile"]
 > = {
   id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
-  tile_id?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>
-  x?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>
-  y?: Resolver<Maybe<ResolversTypes["Int"]>, ParentType, ContextType>
+  tile_id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  type?: Resolver<ResolversTypes["TileTypes"], ParentType, ContextType>
+  x?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  y?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
@@ -266,10 +295,10 @@ export type UserResolvers<
 
 export type Resolvers<ContextType = Context> = {
   Chat?: ChatResolvers<ContextType>
-  Mutation?: MutationResolvers<ContextType>
+  City?: CityResolvers<ContextType>
   Node?: NodeResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
-  Subscription?: SubscriptionResolvers<ContextType>
+  Ship?: ShipResolvers<ContextType>
   Tile?: TileResolvers<ContextType>
   User?: UserResolvers<ContextType>
 }
@@ -285,20 +314,21 @@ export type Scalars = {
 
 export type Chat = Node & {
   __typename?: "Chat"
+  chat_id?: Maybe<Scalars["Int"]>
   id: Scalars["ID"]
-  text: Scalars["String"]
-  time: Scalars["String"]
-  username?: Maybe<Scalars["String"]>
+  recipient_uuid?: Maybe<Scalars["Int"]>
+  room_id?: Maybe<Scalars["Int"]>
+  text?: Maybe<Scalars["String"]>
+  timestamp?: Maybe<Scalars["Int"]>
+  uuid?: Maybe<Scalars["Int"]>
 }
 
-export type Mutation = {
-  __typename?: "Mutation"
-  chatGlobally?: Maybe<Scalars["Boolean"]>
-}
-
-export type MutationChatGloballyArgs = {
-  text: Scalars["String"]
-  username: Scalars["String"]
+export type City = Node & {
+  __typename?: "City"
+  city_id: Scalars["Int"]
+  id: Scalars["ID"]
+  name: Scalars["String"]
+  tile: Tile
 }
 
 export type Node = {
@@ -312,12 +342,24 @@ export type Point = {
 
 export type Query = {
   __typename?: "Query"
-  getAllTiles?: Maybe<Array<Maybe<Tile>>>
-  getTileByID?: Maybe<Tile>
-  getTilesAroundTile?: Maybe<Array<Maybe<Tile>>>
-  getTilesWithinRectangle?: Maybe<Array<Maybe<Tile>>>
-  getUserByUsername?: Maybe<User>
+  getAllCities: Array<Maybe<City>>
+  getAllTiles: Array<Tile>
+  getChatHistory: Array<Maybe<Chat>>
+  getShipsByUUID: Array<Maybe<Ship>>
+  getTileByID: Tile
+  getTilesAroundTile: Array<Tile>
+  getTilesWithinRectangle: Array<Tile>
+  getUserByUsername: User
   verifyToken: Scalars["Boolean"]
+}
+
+export type QueryGetChatHistoryArgs = {
+  room_id?: Maybe<Scalars["Int"]>
+  timestamp: Scalars["Int"]
+}
+
+export type QueryGetShipsByUuidArgs = {
+  uuid?: Maybe<Scalars["Int"]>
 }
 
 export type QueryGetTileByIdArgs = {
@@ -338,17 +380,30 @@ export type QueryGetUserByUsernameArgs = {
   username?: Maybe<Scalars["String"]>
 }
 
-export type Subscription = {
-  __typename?: "Subscription"
-  globalChat: Chat
+export type Ship = Node & {
+  __typename?: "Ship"
+  city: City
+  id: Scalars["ID"]
+  name: Scalars["String"]
+  ship_id: Scalars["Int"]
+  ship_type_id: Scalars["Int"]
+  uuid: Scalars["Int"]
 }
 
 export type Tile = Node & {
   __typename?: "Tile"
   id: Scalars["ID"]
-  tile_id?: Maybe<Scalars["Int"]>
-  x?: Maybe<Scalars["Int"]>
-  y?: Maybe<Scalars["Int"]>
+  tile_id: Scalars["Int"]
+  type: TileTypes
+  x: Scalars["Int"]
+  y: Scalars["Int"]
+}
+
+export enum TileTypes {
+  Forest = "forest",
+  Meadows = "meadows",
+  Mountains = "mountains",
+  Ocean = "ocean",
 }
 
 export type User = Node & {

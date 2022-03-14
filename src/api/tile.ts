@@ -14,17 +14,25 @@ export const typeDefs = gql`
   }
 
   extend type Query {
-    getAllTiles: [Tile]
-    getTilesWithinRectangle(pointA: Point, pointB: Point): [Tile]
-    getTilesAroundTile(point: Point, radius: Int): [Tile]
-    getTileByID(tileId: Int): Tile
+    getAllTiles: [Tile!]!
+    getTilesWithinRectangle(pointA: Point, pointB: Point): [Tile!]!
+    getTilesAroundTile(point: Point, radius: Int): [Tile!]!
+    getTileByID(tileId: Int): Tile!
+  }
+
+  enum TileTypes {
+    ocean
+    meadows
+    forest
+    mountains
   }
 
   type Tile implements Node {
     id: ID!
-    tile_id: Int
-    x: Int
-    y: Int
+    tile_id: Int!
+    x: Int!
+    y: Int!
+    type: TileTypes!
   }
 `
 

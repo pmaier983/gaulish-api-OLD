@@ -5,7 +5,7 @@ import { addGlobalID } from "@/utils"
 
 export const typeDefs = gql`
   extend type Query {
-    getUserByUsername(username: String): User
+    getUserByUsername(username: String): User!
   }
 
   type User implements Node {

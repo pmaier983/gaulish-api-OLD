@@ -1,36 +1,29 @@
 import express from "express"
-import ws from "ws"
 import passport from "passport"
 import compression from "compression"
 import { graphqlHTTP } from "express-graphql"
-import { useServer } from "graphql-ws/lib/use/ws"
 import jwt from "jsonwebtoken"
 import cors from "cors"
 
 import db from "@/database"
 
+import { socketServer } from "./socketServer"
 import { dataLoaders } from "./dataLoaders"
 import { schema } from "./schema"
 import { googleOAuthStrategy, authCallback } from "./auth"
+import { CORS, isDevEnv } from "./utils/constants"
 
 // TODO: setup TypeDocs
-// TODO: can socket.io work with graphql-ws?
 // TODO: setup some database mocking (msw, json-server, etc?)
 // TODO: setup some bundle size reporter?
+// TODO: shift to ESM (https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c#how-can-i-move-my-commonjs-project-to-esm)
 
-const { NODE_ENV, FRONTEND_DEV_URL, FRONTEND_URL, JWT_SECRET } = process.env
-
-const isDevEnv = NODE_ENV === "development"
+const { JWT_SECRET } = process.env
 
 // Create a server:
 const app = express()
 
-app.use(
-  cors({
-    origin: isDevEnv ? FRONTEND_DEV_URL : FRONTEND_URL,
-    methods: "GET,PUT,POST,PATCH",
-  })
-)
+app.use(cors(CORS))
 
 app.use(passport.initialize())
 
@@ -79,39 +72,7 @@ app.use(
 
 // Start the server
 const server = app.listen(8080, () => {
-  // create and use the websocket server
-  const wsServer = new ws.Server({
-    server,
-    path: "/graphql",
-  })
-
-  // create auth as seen here: https://github.com/enisdenjo/graphql-ws#ws-auth-handling
-  useServer(
-    {
-      schema,
-      context: {
-        db,
-        dataLoaders,
-        // TODO: pass the user in each query
-      },
-      onConnect: (ctx) => {
-        console.log("Connect")
-      },
-      onSubscribe: (ctx, msg) => {
-        console.log("Subscribe")
-      },
-      onNext: (ctx, msg, args, result) => {
-        console.debug("Next")
-      },
-      onError: (ctx, msg, errors) => {
-        console.error("Error")
-      },
-      onComplete: (ctx, msg) => {
-        console.log("Complete")
-      },
-    },
-    wsServer
-  )
-
   console.log("Server started on port http://localhost:8080/graphql")
 })
+
+socketServer(server)

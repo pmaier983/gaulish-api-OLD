@@ -8,8 +8,6 @@ const globalTypeDefs = gql`
     id: ID!
   }
   type Query
-  type Mutation
-  type Subscription
 `
 
 // TODO: setup global resolvers
