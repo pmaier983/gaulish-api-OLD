@@ -5,7 +5,7 @@ import { Resolvers } from "@/graphql-types"
 export const typeDefs = gql`
   extend type Query {
     # TODO: paginate
-    getChatHistory(room_id: Int, timestamp: Int!): [Chat]!
+    getChatHistory(room_id: Int, timestamp: Int!): [Chat!]!
   }
 
   type Chat implements Node {

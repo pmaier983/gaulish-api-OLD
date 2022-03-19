@@ -6,7 +6,7 @@ import { buildCitiesResponseItem } from "./city"
 
 export const typeDefs = gql`
   extend type Query {
-    getShipsByUUID(uuid: Int): [Ship]!
+    getShipsByUUID(uuid: Int): [Ship!]!
   }
 
   type Ship implements Node {

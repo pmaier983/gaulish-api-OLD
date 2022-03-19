@@ -5,7 +5,7 @@ import { addGlobalID } from "@/utils"
 
 export const typeDefs = gql`
   extend type Query {
-    getAllCities: [City]!
+    getAllCities: [City!]!
   }
 
   type City implements Node {
