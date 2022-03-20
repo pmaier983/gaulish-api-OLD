@@ -26,7 +26,14 @@ const shipTypes: { [key: string]: Omit<ShipType, "id"> } = {
     name: "Row Boat",
     cargo_capacity: 5,
     inventory_slots: 1,
-    speed: 1_000,
+    speed: 10_000,
+  },
+  2: {
+    ship_type_id: 2,
+    name: "Sloop",
+    cargo_capacity: 100,
+    inventory_slots: 1,
+    speed: 5_000,
   },
 }
 

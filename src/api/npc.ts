@@ -44,6 +44,22 @@ export const resolvers: Resolvers = {
           should_repeat: true,
           ship_type: getShipTypeById(1),
         },
+        {
+          id: "1",
+          start_time: 0,
+          path: await getTilesFromXYPath(context.db, [
+            [0, 4],
+            [0, 5],
+            [0, 6],
+            [1, 6],
+            [2, 6],
+            [2, 5],
+            [2, 4],
+            [1, 4],
+          ]),
+          should_repeat: true,
+          ship_type: getShipTypeById(2),
+        },
       ]
     },
   },
