@@ -3,6 +3,7 @@ import gql from "graphql-tag"
 import { Ship, City, Tile } from "@/graphql-types"
 import { addGlobalID } from "@/utils"
 import { buildCitiesResponseItem } from "./city"
+import { getShipTypeById } from "./ship_type"
 
 export const typeDefs = gql`
   extend type Query {
@@ -15,11 +16,15 @@ export const typeDefs = gql`
     name: String!
     city: City!
     uuid: Int!
-    ship_type_id: Int!
+    ship_type: ShipType!
   }
 `
 
-type ShipFromDB = Omit<Ship, "id"> &
+interface ShipWithShipTypeId extends Omit<Ship, "id"> {
+  ship_type_id: number
+}
+
+type ShipFromDB = ShipWithShipTypeId &
   Omit<City, "id"> &
   Omit<Tile, "id"> & { ship_name: string; city_name: string }
 
@@ -30,7 +35,7 @@ const buildShipsResponseItem = (noIdShip: ShipFromDB) => {
     city: { ...city, name: noIdShip.city_name },
     name: noIdShip.ship_name,
     uuid: noIdShip.uuid,
-    ship_type_id: noIdShip.ship_type_id,
+    ship_type: getShipTypeById(noIdShip.ship_type_id),
   }
   return addGlobalID("ship", "ship_id", ship)
 }

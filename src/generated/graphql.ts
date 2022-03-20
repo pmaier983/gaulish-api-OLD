@@ -129,12 +129,16 @@ export type ResolversTypes = {
   Node:
     | ResolversTypes["Chat"]
     | ResolversTypes["City"]
+    | ResolversTypes["Npc"]
     | ResolversTypes["Ship"]
+    | ResolversTypes["ShipType"]
     | ResolversTypes["Tile"]
     | ResolversTypes["User"]
+  Npc: ResolverTypeWrapper<Npc>
   Point: Point
   Query: ResolverTypeWrapper<{}>
   Ship: ResolverTypeWrapper<Ship>
+  ShipType: ResolverTypeWrapper<ShipType>
   String: ResolverTypeWrapper<Scalars["String"]>
   Tile: ResolverTypeWrapper<Tile>
   TileTypes: TileTypes
@@ -151,12 +155,16 @@ export type ResolversParentTypes = {
   Node:
     | ResolversParentTypes["Chat"]
     | ResolversParentTypes["City"]
+    | ResolversParentTypes["Npc"]
     | ResolversParentTypes["Ship"]
+    | ResolversParentTypes["ShipType"]
     | ResolversParentTypes["Tile"]
     | ResolversParentTypes["User"]
+  Npc: Npc
   Point: Point
   Query: {}
   Ship: Ship
+  ShipType: ShipType
   String: Scalars["String"]
   Tile: Tile
   User: User
@@ -196,11 +204,23 @@ export type NodeResolvers<
   ParentType extends ResolversParentTypes["Node"] = ResolversParentTypes["Node"]
 > = {
   __resolveType: TypeResolveFn<
-    "Chat" | "City" | "Ship" | "Tile" | "User",
+    "Chat" | "City" | "Npc" | "Ship" | "ShipType" | "Tile" | "User",
     ParentType,
     ContextType
   >
   id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
+}
+
+export type NpcResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes["Npc"] = ResolversParentTypes["Npc"]
+> = {
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
+  path?: Resolver<Maybe<Array<ResolversTypes["Tile"]>>, ParentType, ContextType>
+  ship_type?: Resolver<ResolversTypes["ShipType"], ParentType, ContextType>
+  should_repeat?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>
+  start_time?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
 export type QueryResolvers<
@@ -208,19 +228,26 @@ export type QueryResolvers<
   ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
 > = {
   getAllCities?: Resolver<
-    Array<Maybe<ResolversTypes["City"]>>,
+    Array<ResolversTypes["City"]>,
     ParentType,
     ContextType
   >
+  getAllNpcs?: Resolver<Array<ResolversTypes["Npc"]>, ParentType, ContextType>
   getAllTiles?: Resolver<Array<ResolversTypes["Tile"]>, ParentType, ContextType>
   getChatHistory?: Resolver<
-    Array<Maybe<ResolversTypes["Chat"]>>,
+    Array<ResolversTypes["Chat"]>,
     ParentType,
     ContextType,
     RequireFields<QueryGetChatHistoryArgs, "timestamp">
   >
+  getShipTypeFromId?: Resolver<
+    ResolversTypes["ShipType"],
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetShipTypeFromIdArgs, never>
+  >
   getShipsByUUID?: Resolver<
-    Array<Maybe<ResolversTypes["Ship"]>>,
+    Array<ResolversTypes["Ship"]>,
     ParentType,
     ContextType,
     RequireFields<QueryGetShipsByUuidArgs, never>
@@ -260,8 +287,21 @@ export type ShipResolvers<
   id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
   name?: Resolver<ResolversTypes["String"], ParentType, ContextType>
   ship_id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
-  ship_type_id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  ship_type?: Resolver<ResolversTypes["ShipType"], ParentType, ContextType>
   uuid?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type ShipTypeResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes["ShipType"] = ResolversParentTypes["ShipType"]
+> = {
+  cargo_capacity?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
+  inventory_slots?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  name?: Resolver<ResolversTypes["String"], ParentType, ContextType>
+  ship_type_id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  speed?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
@@ -297,8 +337,10 @@ export type Resolvers<ContextType = Context> = {
   Chat?: ChatResolvers<ContextType>
   City?: CityResolvers<ContextType>
   Node?: NodeResolvers<ContextType>
+  Npc?: NpcResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
   Ship?: ShipResolvers<ContextType>
+  ShipType?: ShipTypeResolvers<ContextType>
   Tile?: TileResolvers<ContextType>
   User?: UserResolvers<ContextType>
 }
@@ -335,6 +377,15 @@ export type Node = {
   id: Scalars["ID"]
 }
 
+export type Npc = Node & {
+  __typename?: "Npc"
+  id: Scalars["ID"]
+  path?: Maybe<Array<Tile>>
+  ship_type: ShipType
+  should_repeat: Scalars["Boolean"]
+  start_time: Scalars["Int"]
+}
+
 export type Point = {
   x?: Maybe<Scalars["Int"]>
   y?: Maybe<Scalars["Int"]>
@@ -342,10 +393,12 @@ export type Point = {
 
 export type Query = {
   __typename?: "Query"
-  getAllCities: Array<Maybe<City>>
+  getAllCities: Array<City>
+  getAllNpcs: Array<Npc>
   getAllTiles: Array<Tile>
-  getChatHistory: Array<Maybe<Chat>>
-  getShipsByUUID: Array<Maybe<Ship>>
+  getChatHistory: Array<Chat>
+  getShipTypeFromId: ShipType
+  getShipsByUUID: Array<Ship>
   getTileByID: Tile
   getTilesAroundTile: Array<Tile>
   getTilesWithinRectangle: Array<Tile>
@@ -356,6 +409,10 @@ export type Query = {
 export type QueryGetChatHistoryArgs = {
   room_id?: Maybe<Scalars["Int"]>
   timestamp: Scalars["Int"]
+}
+
+export type QueryGetShipTypeFromIdArgs = {
+  shipTypeId?: Maybe<Scalars["Int"]>
 }
 
 export type QueryGetShipsByUuidArgs = {
@@ -386,8 +443,18 @@ export type Ship = Node & {
   id: Scalars["ID"]
   name: Scalars["String"]
   ship_id: Scalars["Int"]
-  ship_type_id: Scalars["Int"]
+  ship_type: ShipType
   uuid: Scalars["Int"]
+}
+
+export type ShipType = Node & {
+  __typename?: "ShipType"
+  cargo_capacity: Scalars["Int"]
+  id: Scalars["ID"]
+  inventory_slots: Scalars["Int"]
+  name: Scalars["String"]
+  ship_type_id: Scalars["Int"]
+  speed: Scalars["Int"]
 }
 
 export type Tile = Node & {
