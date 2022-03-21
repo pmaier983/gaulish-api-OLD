@@ -14,7 +14,7 @@ export const typeDefs = gql`
     id: ID!
     ship_id: Int!
     name: String!
-    city: City!
+    city: City! # the current city (at least thats how its being used now)
     uuid: Int!
     ship_type: ShipType!
   }
