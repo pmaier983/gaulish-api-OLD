@@ -16,6 +16,7 @@ export const typeDefs = gql`
     name: String!
     cargo_capacity: Int!
     inventory_slots: Int!
+    attack_rating: Int! # TODO: break this down? (cannons, ramming etc.)
     speed: Int! # in milliseconds
   }
 `
@@ -26,6 +27,7 @@ const shipTypes: { [key: string]: Omit<ShipType, "id"> } = {
     name: "Row Boat",
     cargo_capacity: 5,
     inventory_slots: 1,
+    attack_rating: 1,
     speed: 10_000,
   },
   2: {
@@ -33,6 +35,7 @@ const shipTypes: { [key: string]: Omit<ShipType, "id"> } = {
     name: "Sloop",
     cargo_capacity: 100,
     inventory_slots: 1,
+    attack_rating: 10,
     speed: 5_000,
   },
 }

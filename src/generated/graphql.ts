@@ -296,6 +296,7 @@ export type ShipTypeResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes["ShipType"] = ResolversParentTypes["ShipType"]
 > = {
+  attack_rating?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
   cargo_capacity?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
   id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
   inventory_slots?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
@@ -449,6 +450,7 @@ export type Ship = Node & {
 
 export type ShipType = Node & {
   __typename?: "ShipType"
+  attack_rating: Scalars["Int"]
   cargo_capacity: Scalars["Int"]
   id: Scalars["ID"]
   inventory_slots: Scalars["Int"]
