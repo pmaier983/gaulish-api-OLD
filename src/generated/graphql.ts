@@ -126,15 +126,18 @@ export type ResolversTypes = {
   City: ResolverTypeWrapper<City>
   ID: ResolverTypeWrapper<Scalars["ID"]>
   Int: ResolverTypeWrapper<Scalars["Int"]>
+  Mutation: ResolverTypeWrapper<{}>
   Node:
     | ResolversTypes["Chat"]
     | ResolversTypes["City"]
     | ResolversTypes["Npc"]
+    | ResolversTypes["Path"]
     | ResolversTypes["Ship"]
     | ResolversTypes["ShipType"]
     | ResolversTypes["Tile"]
     | ResolversTypes["User"]
   Npc: ResolverTypeWrapper<Npc>
+  Path: ResolverTypeWrapper<Path>
   Point: Point
   Query: ResolverTypeWrapper<{}>
   Ship: ResolverTypeWrapper<Ship>
@@ -152,15 +155,18 @@ export type ResolversParentTypes = {
   City: City
   ID: Scalars["ID"]
   Int: Scalars["Int"]
+  Mutation: {}
   Node:
     | ResolversParentTypes["Chat"]
     | ResolversParentTypes["City"]
     | ResolversParentTypes["Npc"]
+    | ResolversParentTypes["Path"]
     | ResolversParentTypes["Ship"]
     | ResolversParentTypes["ShipType"]
     | ResolversParentTypes["Tile"]
     | ResolversParentTypes["User"]
   Npc: Npc
+  Path: Path
   Point: Point
   Query: {}
   Ship: Ship
@@ -199,12 +205,24 @@ export type CityResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
+export type MutationResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"]
+> = {
+  setShipPath?: Resolver<
+    Maybe<ResolversTypes["Boolean"]>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationSetShipPathArgs, "shipPath" | "ship_id">
+  >
+}
+
 export type NodeResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes["Node"] = ResolversParentTypes["Node"]
 > = {
   __resolveType: TypeResolveFn<
-    "Chat" | "City" | "Npc" | "Ship" | "ShipType" | "Tile" | "User",
+    "Chat" | "City" | "Npc" | "Path" | "Ship" | "ShipType" | "Tile" | "User",
     ParentType,
     ContextType
   >
@@ -216,9 +234,21 @@ export type NpcResolvers<
   ParentType extends ResolversParentTypes["Npc"] = ResolversParentTypes["Npc"]
 > = {
   id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
-  path?: Resolver<Maybe<Array<ResolversTypes["Tile"]>>, ParentType, ContextType>
+  path?: Resolver<Array<ResolversTypes["Tile"]>, ParentType, ContextType>
   ship_type?: Resolver<ResolversTypes["ShipType"], ParentType, ContextType>
   should_repeat?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>
+  start_time?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type PathResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes["Path"] = ResolversParentTypes["Path"]
+> = {
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
+  path?: Resolver<ResolversTypes["String"], ParentType, ContextType>
+  path_id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  ship_id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
   start_time?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
@@ -337,8 +367,10 @@ export type UserResolvers<
 export type Resolvers<ContextType = Context> = {
   Chat?: ChatResolvers<ContextType>
   City?: CityResolvers<ContextType>
+  Mutation?: MutationResolvers<ContextType>
   Node?: NodeResolvers<ContextType>
   Npc?: NpcResolvers<ContextType>
+  Path?: PathResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
   Ship?: ShipResolvers<ContextType>
   ShipType?: ShipTypeResolvers<ContextType>
@@ -374,6 +406,16 @@ export type City = Node & {
   tile: Tile
 }
 
+export type Mutation = {
+  __typename?: "Mutation"
+  setShipPath?: Maybe<Scalars["Boolean"]>
+}
+
+export type MutationSetShipPathArgs = {
+  shipPath: Scalars["String"]
+  ship_id: Scalars["Int"]
+}
+
 export type Node = {
   id: Scalars["ID"]
 }
@@ -381,9 +423,18 @@ export type Node = {
 export type Npc = Node & {
   __typename?: "Npc"
   id: Scalars["ID"]
-  path?: Maybe<Array<Tile>>
+  path: Array<Tile>
   ship_type: ShipType
   should_repeat: Scalars["Boolean"]
+  start_time: Scalars["Int"]
+}
+
+export type Path = Node & {
+  __typename?: "Path"
+  id: Scalars["ID"]
+  path: Scalars["String"]
+  path_id: Scalars["Int"]
+  ship_id: Scalars["Int"]
   start_time: Scalars["Int"]
 }
 
