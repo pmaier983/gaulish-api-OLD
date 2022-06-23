@@ -126,10 +126,12 @@ export type ResolversTypes = {
   City: ResolverTypeWrapper<City>
   ID: ResolverTypeWrapper<Scalars["ID"]>
   Int: ResolverTypeWrapper<Scalars["Int"]>
+  Log: ResolverTypeWrapper<Log>
   Mutation: ResolverTypeWrapper<{}>
   Node:
     | ResolversTypes["Chat"]
     | ResolversTypes["City"]
+    | ResolversTypes["Log"]
     | ResolversTypes["Npc"]
     | ResolversTypes["Path"]
     | ResolversTypes["Ship"]
@@ -155,10 +157,12 @@ export type ResolversParentTypes = {
   City: City
   ID: Scalars["ID"]
   Int: Scalars["Int"]
+  Log: Log
   Mutation: {}
   Node:
     | ResolversParentTypes["Chat"]
     | ResolversParentTypes["City"]
+    | ResolversParentTypes["Log"]
     | ResolversParentTypes["Npc"]
     | ResolversParentTypes["Path"]
     | ResolversParentTypes["Ship"]
@@ -205,10 +209,27 @@ export type CityResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
+export type LogResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes["Log"] = ResolversParentTypes["Log"]
+> = {
+  id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
+  text?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>
+  type?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  uuid?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
 export type MutationResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"]
 > = {
+  setLog?: Resolver<
+    Maybe<ResolversTypes["Boolean"]>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationSetLogArgs, "text" | "type" | "uuid">
+  >
   setShipPath?: Resolver<
     Maybe<ResolversTypes["Boolean"]>,
     ParentType,
@@ -222,7 +243,15 @@ export type NodeResolvers<
   ParentType extends ResolversParentTypes["Node"] = ResolversParentTypes["Node"]
 > = {
   __resolveType: TypeResolveFn<
-    "Chat" | "City" | "Npc" | "Path" | "Ship" | "ShipType" | "Tile" | "User",
+    | "Chat"
+    | "City"
+    | "Log"
+    | "Npc"
+    | "Path"
+    | "Ship"
+    | "ShipType"
+    | "Tile"
+    | "User",
     ParentType,
     ContextType
   >
@@ -269,6 +298,12 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QueryGetChatHistoryArgs, "timestamp">
+  >
+  getRecentLogs?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes["Log"]>>>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetRecentLogsArgs, "uuid">
   >
   getShipTypeFromId?: Resolver<
     ResolversTypes["ShipType"],
@@ -367,6 +402,7 @@ export type UserResolvers<
 export type Resolvers<ContextType = Context> = {
   Chat?: ChatResolvers<ContextType>
   City?: CityResolvers<ContextType>
+  Log?: LogResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
   Node?: NodeResolvers<ContextType>
   Npc?: NpcResolvers<ContextType>
@@ -406,9 +442,24 @@ export type City = Node & {
   tile: Tile
 }
 
+export type Log = Node & {
+  __typename?: "Log"
+  id: Scalars["ID"]
+  text?: Maybe<Scalars["String"]>
+  type: Scalars["Int"]
+  uuid: Scalars["Int"]
+}
+
 export type Mutation = {
   __typename?: "Mutation"
+  setLog?: Maybe<Scalars["Boolean"]>
   setShipPath?: Maybe<Scalars["Boolean"]>
+}
+
+export type MutationSetLogArgs = {
+  text: Scalars["String"]
+  type: Scalars["Int"]
+  uuid: Scalars["Int"]
 }
 
 export type MutationSetShipPathArgs = {
@@ -449,6 +500,7 @@ export type Query = {
   getAllNpcs: Array<Npc>
   getAllTiles: Array<Tile>
   getChatHistory: Array<Chat>
+  getRecentLogs?: Maybe<Array<Maybe<Log>>>
   getShipTypeFromId: ShipType
   getShipsByUUID: Array<Ship>
   getTileByID: Tile
@@ -461,6 +513,10 @@ export type Query = {
 export type QueryGetChatHistoryArgs = {
   room_id?: Maybe<Scalars["Int"]>
   timestamp: Scalars["Int"]
+}
+
+export type QueryGetRecentLogsArgs = {
+  uuid: Scalars["Int"]
 }
 
 export type QueryGetShipTypeFromIdArgs = {
