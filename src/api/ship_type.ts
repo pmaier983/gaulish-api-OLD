@@ -21,7 +21,7 @@ export const typeDefs = gql`
   }
 `
 
-const shipTypes: { [key: string]: Omit<ShipType, "id"> } = {
+export const shipTypes: { [key: string]: Omit<ShipType, "id"> } = {
   1: {
     ship_type_id: 1,
     name: "Row Boat",

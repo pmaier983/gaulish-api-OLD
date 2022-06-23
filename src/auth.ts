@@ -21,7 +21,7 @@ export const OAuthHandler = (
     { message }?: { message: string }
   ) => void
 ) =>
-  db.task(async (t) => {
+  db.task(async (taskDb) => {
     // STEP 1 Check that the user is verified. If not reject.
     if (!profile.email_verified || !profile.verified || !profile.email) {
       // prevent a unverified user from creating an account to avoid
@@ -31,7 +31,7 @@ export const OAuthHandler = (
 
     const userEmail = profile.email
 
-    const countOfUsersInDbWithEmail = await t.oneOrNone(
+    const countOfUsersInDbWithEmail = await taskDb.oneOrNone(
       "SELECT count(*) FROM public.user WHERE email = $1",
       userEmail,
       ({ count }) => parseInt(count, 10)
@@ -54,7 +54,7 @@ export const OAuthHandler = (
 
     // STEP 2: if there is not user in the DB create one.
     if (countOfUsersInDbWithEmail === 0) {
-      const countOFUsersInDb = await t.one(
+      const countOFUsersInDb = await taskDb.one(
         "SELECT count(*) FROM public.user",
         {},
         ({ count }) => parseInt(count, 10)
@@ -68,7 +68,7 @@ export const OAuthHandler = (
       }
 
       // insert them into the database
-      await t.none(
+      await taskDb.none(
         "INSERT into public.user (password, time_created, email, username, username_update_time) VALUES (${password}, ${time_created}, ${email}, ${username}, ${username_update_time})",
         newUserInfo
       )
@@ -77,7 +77,7 @@ export const OAuthHandler = (
     }
 
     // STEP 3: Fetch your user (possibly newly created) and verify their password
-    const fullUser = await t.one(
+    const fullUser = await taskDb.one(
       "SELECT * FROM public.user WHERE email = $1",
       userEmail
     )
@@ -100,12 +100,12 @@ export const OAuthHandler = (
 
     if (isNewUser) {
       // Give the new user a beginner ship in a random city
-      const cityIDs = await t.any("select city_id from public.city")
+      const cityIDs = await taskDb.any("select city_id from public.city")
 
       const randomCityID =
         cityIDs[Math.floor(Math.random() * cityIDs.length)].city_id
 
-      await t.none(
+      await taskDb.none(
         "insert into public.ship (name, city_id, uuid, ship_type_id) values ('GoingMerry', ${randomCityID}, ${uuid}, 1)",
         { ...fullUser, randomCityID }
       )

@@ -1,6 +1,6 @@
 import gql from "graphql-tag"
 
-import { Ship, City, Tile } from "@/graphql-types"
+import { Ship, City, Tile, Resolvers } from "@/graphql-types"
 import { addGlobalID } from "@/utils"
 import { buildCitiesResponseItem } from "./city"
 import { getShipTypeById } from "./ship_type"
@@ -40,7 +40,7 @@ const buildShipsResponseItem = (noIdShip: ShipFromDB) => {
   return addGlobalID("ship", "ship_id", ship)
 }
 
-export const resolvers = {
+export const resolvers: Resolvers = {
   Query: {
     getShipsByUUID: async (_obj, { uuid }, context) => {
       const flatShips: ShipFromDB[] = await context.db.any(
@@ -52,7 +52,7 @@ export const resolvers = {
         on Cities.city_id = Ships.city_id
         join public.tile Tiles
         on Tiles.tile_id = Cities.tile_id
-        where uuid = 1`,
+        where uuid = $1`,
         uuid
       )
       return flatShips.map((ship) => buildShipsResponseItem(ship))
