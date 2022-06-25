@@ -48,3 +48,25 @@ export const getTilesFromXYPath = async (
   })
   return addGlobalID<Tile[]>("tile", "tile_id", sortedTiles)
 }
+
+export interface ShipPathPoint {
+  x: number
+  y: number
+  tile_id: number
+}
+
+export type ShipPath = ShipPathPoint[]
+
+export const shipPathArrayFromString = (shipPath: string): ShipPath => {
+  // TODO: error handling and type
+  return shipPath.split("|").map((shipPathTile) => {
+    const shipPathPointArray = shipPathTile
+      .split(",")
+      .map((dataPoint) => parseInt(dataPoint, 10))
+    return {
+      x: shipPathPointArray[0],
+      y: shipPathPointArray[1],
+      tile_id: shipPathPointArray[2],
+    }
+  })
+}
