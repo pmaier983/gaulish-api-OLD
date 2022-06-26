@@ -1,6 +1,8 @@
 import gql from "graphql-tag"
 
 import { Resolvers } from "@/generated/graphql"
+import { shipTypes } from "./ship_type"
+import { shipPathArrayFromString } from "@/utils"
 
 export const typeDefs = gql`
   extend type Mutation {
