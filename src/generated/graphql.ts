@@ -214,6 +214,7 @@ export type LogResolvers<
   ParentType extends ResolversParentTypes["Log"] = ResolversParentTypes["Log"]
 > = {
   id?: Resolver<ResolversTypes["ID"], ParentType, ContextType>
+  log_id?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
   text?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>
   type?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
   uuid?: Resolver<ResolversTypes["Int"], ParentType, ContextType>
@@ -225,10 +226,10 @@ export type MutationResolvers<
   ParentType extends ResolversParentTypes["Mutation"] = ResolversParentTypes["Mutation"]
 > = {
   setLog?: Resolver<
-    Maybe<ResolversTypes["Boolean"]>,
+    ResolversTypes["Int"],
     ParentType,
     ContextType,
-    RequireFields<MutationSetLogArgs, "text" | "type" | "uuid">
+    RequireFields<MutationSetLogArgs, "text" | "type">
   >
   setShipPath?: Resolver<
     Maybe<ResolversTypes["Boolean"]>,
@@ -302,8 +303,7 @@ export type QueryResolvers<
   getRecentLogs?: Resolver<
     Maybe<Array<Maybe<ResolversTypes["Log"]>>>,
     ParentType,
-    ContextType,
-    RequireFields<QueryGetRecentLogsArgs, "uuid">
+    ContextType
   >
   getShipTypeFromId?: Resolver<
     ResolversTypes["ShipType"],
@@ -445,6 +445,7 @@ export type City = Node & {
 export type Log = Node & {
   __typename?: "Log"
   id: Scalars["ID"]
+  log_id: Scalars["Int"]
   text?: Maybe<Scalars["String"]>
   type: Scalars["Int"]
   uuid: Scalars["Int"]
@@ -452,14 +453,13 @@ export type Log = Node & {
 
 export type Mutation = {
   __typename?: "Mutation"
-  setLog?: Maybe<Scalars["Boolean"]>
+  setLog: Scalars["Int"]
   setShipPath?: Maybe<Scalars["Boolean"]>
 }
 
 export type MutationSetLogArgs = {
   text: Scalars["String"]
   type: Scalars["Int"]
-  uuid: Scalars["Int"]
 }
 
 export type MutationSetShipPathArgs = {
@@ -513,10 +513,6 @@ export type Query = {
 export type QueryGetChatHistoryArgs = {
   room_id?: Maybe<Scalars["Int"]>
   timestamp: Scalars["Int"]
-}
-
-export type QueryGetRecentLogsArgs = {
-  uuid: Scalars["Int"]
 }
 
 export type QueryGetShipTypeFromIdArgs = {
