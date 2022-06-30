@@ -33,7 +33,8 @@ export const authSocket = (io: SocketServer) => {
         }),
       })
 
-      const response = await verificationResponse.json()
+      // TODO: properly type
+      const response: any = await verificationResponse.json()
 
       if (!response.data.verifyToken) {
         return next(new Error("Users Token Was Invalid"))

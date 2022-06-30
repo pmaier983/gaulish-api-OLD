@@ -3,6 +3,8 @@ schema: "http://localhost:8080/graphql" #TODO: have this pull locally
 generates:
   src/generated/graphql.ts:
     plugins:
+      - add:
+          content: '/* 🌶️ This is a generated file, do not modify! */'
       - typescript
       - typescript-resolvers
     config:
