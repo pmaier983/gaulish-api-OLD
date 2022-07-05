@@ -13,7 +13,7 @@
     "dev:docker": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
     "dev": "dotenv -- tsnd --inspect=9230 -r tsconfig-paths/register --poll --files --respawn src/server.ts",
     "lint": "eslint . --fix",
-    "generate-types": "graphql-codegen --config codegen.yml && npm run lint",
+    "generate-types": "graphql-codegen",
     "prepare": "husky install"
   },
   "dependencies": {
