@@ -17,6 +17,7 @@ export const typeDefs = gql`
     city: City! # the current city (at least thats how its being used now)
     uuid: Int!
     ship_type: ShipType!
+    is_sunk: Boolean!
   }
 `
 

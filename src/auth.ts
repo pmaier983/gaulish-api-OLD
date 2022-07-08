@@ -106,7 +106,7 @@ export const OAuthHandler = (
         cityIDs[Math.floor(Math.random() * cityIDs.length)].city_id
 
       await taskDb.none(
-        "insert into public.ship (name, city_id, uuid, ship_type_id) values ('GoingMerry', ${randomCityID}, ${uuid}, 1)",
+        "insert into public.ship (name, city_id, uuid, ship_type_id, is_sunk) values ('GoingMerry', ${randomCityID}, ${uuid}, 1, false)",
         { ...fullUser, randomCityID }
       )
     }
