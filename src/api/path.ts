@@ -6,12 +6,12 @@ import { shipPathArrayFromString } from "@/utils"
 import { LogTypes, setLog } from "./log"
 
 import type { Context } from "@/context"
-import type { Database } from "@/database"
+import type { ITask } from "pg-promise"
 
 export const typeDefs = gql`
   extend type Mutation {
     isShipSailing(ship_id: Int!): Boolean
-    setShipPath(ship_id: Int!, shipPath: String!): String #TODO: error properly?
+    setShipPath(ship_id: Int!, shipPath: String!): String
   }
 
   type Path implements Node {
@@ -24,7 +24,7 @@ export const typeDefs = gql`
 `
 
 type IsShipSailingTask = {
-  (param: { ship_id: number; taskDb: Database }): Promise<boolean>
+  (param: { ship_id: number; taskDb: ITask<unknown> }): Promise<boolean>
 }
 
 const isShipSailingTask: IsShipSailingTask = async ({ taskDb, ship_id }) => {
@@ -54,14 +54,20 @@ LIMIT 1`,
   return endTime < Date.now()
 }
 
-interface IsShipSailingOverload extends IsShipSailingTask {
+type IsShipSailingOverload = {
   (param: { ship_id: number; context: Context }): Promise<boolean>
+  // TODO: don't use unknown
+  (param: { ship_id: number; taskDb: ITask<unknown> }): Promise<boolean>
 }
 
 const isShipSailingOverload: IsShipSailingOverload = async ({
   ship_id,
   context,
   taskDb,
+}: {
+  ship_id: number
+  context: Context
+  taskDb: ITask<unknown>
 }) => {
   if (taskDb) return isShipSailingTask({ ship_id, taskDb })
   return context.db.task(async (newTaskDb) =>
@@ -74,7 +80,7 @@ export { isShipSailingOverload as isShipSailing }
 export const resolvers: Resolvers = {
   Mutation: {
     isShipSailing: async (_obj, { ship_id }, context) =>
-      await isShipSailingOverload({ ship_id, context }),
+      isShipSailingOverload({ ship_id, context }),
       // TODO: duplicate validation here!
       // TODO why not just use template literals
 
