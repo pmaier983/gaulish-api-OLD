@@ -1,12 +1,17 @@
 import gql from "graphql-tag"
 
-import { Resolvers } from "@/generated/graphql"
+import { Path, Resolvers } from "@/generated/graphql"
 import { shipTypes } from "./ship_type"
 import { shipPathArrayFromString } from "@/utils"
+import { LogTypes, setLog } from "./log"
+
+import type { Context } from "@/context"
+import type { Database } from "@/database"
 
 export const typeDefs = gql`
   extend type Mutation {
-    setShipPath(ship_id: Int!, shipPath: String!): Boolean #TODO: error properly?
+    isShipSailing(ship_id: Int!): Boolean
+    setShipPath(ship_id: Int!, shipPath: String!): String #TODO: error properly?
   }
 
   type Path implements Node {
@@ -18,9 +23,58 @@ export const typeDefs = gql`
   }
 `
 
+type IsShipSailingTask = {
+  (param: { ship_id: number; taskDb: Database }): Promise<boolean>
+}
+
+const isShipSailingTask: IsShipSailingTask = async ({ taskDb, ship_id }) => {
+  const mostRecentPath: Path = await taskDb.one(
+    `SELECT * FROM public.path 
+WHERE ship_id = $(ship_id) 
+ORDER BY path_id DESC 
+LIMIT 1`,
+    { ship_id }
+  )
+
+  const shipPathArray = shipPathArrayFromString(mostRecentPath.path)
+
+  const ship_type_id = await taskDb.one(
+    `select ship_type_id from public.ship where ship_id = $1`,
+    ship_id,
+    (val) => val.ship_type_id
+  )
+
+  const shipSpeed = shipTypes[ship_type_id].speed
+
+  const journeyLength = shipPathArray.length
+
+  /* Calculate Time to Destination */
+  const endTime = journeyLength * shipSpeed + mostRecentPath.start_time
+
+  return endTime < Date.now()
+}
+
+interface IsShipSailingOverload extends IsShipSailingTask {
+  (param: { ship_id: number; context: Context }): Promise<boolean>
+}
+
+const isShipSailingOverload: IsShipSailingOverload = async ({
+  ship_id,
+  context,
+  taskDb,
+}) => {
+  if (taskDb) return isShipSailingTask({ ship_id, taskDb })
+  return context.db.task(async (newTaskDb) =>
+    isShipSailingTask({ ship_id, taskDb: newTaskDb })
+  )
+}
+
+export { isShipSailingOverload as isShipSailing }
+
 export const resolvers: Resolvers = {
   Mutation: {
-    setShipPath: async (_obj, { ship_id, shipPath }, context) => {
+    isShipSailing: async (_obj, { ship_id }, context) =>
+      await isShipSailingOverload({ ship_id, context }),
       // TODO: duplicate validation here!
       // TODO why not just use template literals
 
