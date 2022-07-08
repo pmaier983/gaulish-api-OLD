@@ -3,10 +3,12 @@ import gql from "graphql-tag"
 import { Log, Resolvers } from "@/graphql-types"
 import { Context } from "@/context"
 import { addGlobalID } from "@/utils"
+import { ITask } from "pg-promise"
 
 // TODO: share between code bases.
 export enum LogTypes {
   "BASIC" = 10,
+  "IMPORTANT" = 100,
 }
 
 export const typeDefs = gql`
@@ -39,7 +41,7 @@ type SetLog = {
     type: LogTypes
     text: string
     timestamp?: number
-    taskDb: Database
+    taskDb: ITask<unknown>
   }): Promise<number>
 }
 
