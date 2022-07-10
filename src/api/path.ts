@@ -54,13 +54,13 @@ LIMIT 1`,
   return endTime < Date.now()
 }
 
-type IsShipSailingOverload = {
+type IsShipSailing = {
   (param: { ship_id: number; context: Context }): Promise<boolean>
   // TODO: don't use unknown
   (param: { ship_id: number; taskDb: ITask<unknown> }): Promise<boolean>
 }
 
-const isShipSailingOverload: IsShipSailingOverload = async ({
+const isShipSailing: IsShipSailing = async ({
   ship_id,
   context,
   taskDb,
@@ -75,50 +75,63 @@ const isShipSailingOverload: IsShipSailingOverload = async ({
   )
 }
 
-export { isShipSailingOverload as isShipSailing }
-
 export const resolvers: Resolvers = {
   Mutation: {
     isShipSailing: async (_obj, { ship_id }, context) =>
-      isShipSailingOverload({ ship_id, context }),
-      // TODO: duplicate validation here!
-      // TODO why not just use template literals
-
-      const shipPathArray = shipPathArrayFromString(shipPath)
-
+      isShipSailing({ ship_id, context }),
+    setShipPath: async (_obj, { ship_id, shipPath }, context) =>
       context.db.task(async (taskDb) => {
+        // TODO: duplicate shipPath validation here!
+        const shipPathArray = shipPathArrayFromString(shipPath)
+
+        if (isShipSailing({ ship_id, taskDb })) {
+          throw new Error(`You ship (ship_id: ${ship_id}) is already sailing`)
+        }
+        // TODO: proper error handling after each request!
+
+        const startTime = Date.now()
+
         taskDb.one(
           "insert into public.path (ship_id, start_time, path) values (${ship_id}, ${start_time}, ${shipPath})",
           {
             ship_id,
-            start_time: Date.now(),
+            start_time: startTime,
             shipPath,
           }
         )
 
         const ship_type_id = await taskDb.one(
           `select ship_type_id from public.ship where ship_id = $1`,
-          ship_id
+          ship_id,
+          (val) => val.ship_type_id
         )
+
         const shipSpeed = shipTypes[ship_type_id].speed
 
         const journeyLength = shipPathArray.length
+
+        /* Calculate Time to Destination */
         const timeToDestination = journeyLength * shipSpeed
 
         const destinationCityId = await taskDb.one(
           `select city_id from public.city where tile_id = $1`,
-          shipPathArray.at(-1).tile_id
+          shipPathArray.at(-1).tile_id,
+          (val) => val?.city_id
         )
 
-        setTimeout(() => {
-          taskDb.one(
-            "update public.ship set city_id = ${destinationCityId} where ship_id = ${ship_id}",
-            { destinationCityId, ship_id }
-          )
-        }, timeToDestination)
-      })
+        taskDb.one(
+          "update public.ship set city_id = ${destinationCityId} where ship_id = ${ship_id}",
+          { destinationCityId, ship_id }
+        )
 
-      return false
-    },
+        setLog({
+          context,
+          timestamp: startTime + timeToDestination,
+          text: "TODO: Ship sailed",
+          type: LogTypes.IMPORTANT,
+        })
+
+        return "" // TODO: return proper ship path
+      }),
   },
 }
