@@ -18,49 +18,60 @@ export const typeDefs = gql`
   }
 `
 
+export const npcs = [
+  {
+    id: "0",
+    start_time: 0,
+    path: [
+      [5, 1],
+      [4, 1],
+      [3, 1],
+      [3, 2],
+      [3, 3],
+      [2, 3],
+      [2, 4],
+      [2, 5],
+      [3, 5],
+      [4, 5],
+      [4, 4],
+      [5, 4],
+      [5, 3],
+      [5, 2],
+    ],
+    should_repeat: true,
+    ship_type: getShipTypeById(1),
+  },
+  {
+    id: "1",
+    start_time: 0,
+    path: [
+      [5, 1],
+      [4, 1],
+      [3, 1],
+      [3, 2],
+      [3, 3],
+      [2, 3],
+      [2, 4],
+      [2, 5],
+      [3, 5],
+      [4, 5],
+      [4, 4],
+      [5, 4],
+      [5, 3],
+      [5, 2],
+    ],
+    should_repeat: true,
+    ship_type: getShipTypeById(2),
+  },
+]
+
 export const resolvers: Resolvers = {
   Query: {
     getAllNpcs: async (obj, args, context) => {
-      return [
-        {
-          id: "0",
-          start_time: 0,
-          path: await getTilesFromXYPath(context.db, [
-            [5, 1],
-            [4, 1],
-            [3, 1],
-            [3, 2],
-            [3, 3],
-            [2, 3],
-            [2, 4],
-            [2, 5],
-            [3, 5],
-            [4, 5],
-            [4, 4],
-            [5, 4],
-            [5, 3],
-            [5, 2],
-          ]),
-          should_repeat: true,
-          ship_type: getShipTypeById(1),
-        },
-        {
-          id: "1",
-          start_time: 0,
-          path: await getTilesFromXYPath(context.db, [
-            [0, 4],
-            [0, 5],
-            [0, 6],
-            [1, 6],
-            [2, 6],
-            [2, 5],
-            [2, 4],
-            [1, 4],
-          ]),
-          should_repeat: true,
-          ship_type: getShipTypeById(2),
-        },
-      ]
+      return npcs.map(async (npc) => {
+        const newPath = await getTilesFromXYPath(context.db, npc.path as any) // TODO: fix typing
+        return { ...npc, path: newPath }
+      })
     },
   },
 }
