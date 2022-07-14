@@ -87,18 +87,8 @@ export const resolvers: Resolvers = {
         if (isShipSailing({ ship_id, taskDb })) {
           throw new Error(`You ship (ship_id: ${ship_id}) is already sailing`)
         }
-        // TODO: proper error handling after each request!
 
         const startTime = Date.now()
-
-        taskDb.one(
-          "insert into public.path (ship_id, start_time, path) values (${ship_id}, ${start_time}, ${shipPath})",
-          {
-            ship_id,
-            start_time: startTime,
-            shipPath,
-          }
-        )
 
         const ship_type_id = await taskDb.one(
           `select ship_type_id from public.ship where ship_id = $1`,
@@ -110,7 +100,6 @@ export const resolvers: Resolvers = {
 
         const journeyLength = shipPathArray.length
 
-        /* Calculate Time to Destination */
         const timeToDestination = journeyLength * shipSpeed
 
         const destinationCityId = await taskDb.one(
@@ -119,11 +108,25 @@ export const resolvers: Resolvers = {
           (val) => val?.city_id
         )
 
+        /* Calculate the events of the journey */
+
+        /* Insert the Path into the path table */
+        taskDb.one(
+          "insert into public.path (ship_id, start_time, path) values (${ship_id}, ${start_time}, ${shipPath})",
+          {
+            ship_id,
+            start_time: startTime,
+            shipPath,
+          }
+        )
+
+        /* Move the ship to its destination city */
         taskDb.one(
           "update public.ship set city_id = ${destinationCityId} where ship_id = ${ship_id}",
           { destinationCityId, ship_id }
         )
 
+        /* Update the logs in the future to reflect the journey */
         setLog({
           context,
           timestamp: startTime + timeToDestination,
